@@ -403,6 +403,23 @@ ul.plain{margin:8px 0 0;padding-left:20px;display:grid;gap:6px}
 .revstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px}
 .revstats span{display:grid}.revstats small{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}.revstats b{font-variant-numeric:tabular-nums}
 .rev .pu-add{margin-top:6px}
+.planseg{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);margin:0 0 10px;background:var(--surface)}
+.planseg button{font:inherit;font-weight:800;font-size:14px;padding:8px 6px;border:0;background:none;color:var(--ink);cursor:pointer}
+.planseg button[aria-selected="true"]{background:var(--ink);color:var(--paper,#fff)}
+.todaycard{border-width:3px}
+.addrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.xtag{background:var(--surface)}
+.rtalk{margin-top:8px;border-top:1.5px dashed var(--ink);padding-top:6px}
+.rmsg{margin-top:6px;padding:6px 8px;border:1.5px solid var(--ink);background:var(--surface)}
+.rmsg.m{margin-left:18px}
+.rmsg.c{margin-right:18px;background:var(--tint)}
+.rmsg small{font-weight:800;font-size:11.5px;color:var(--muted)}
+.rmsg p{margin:2px 0 0;font-size:14px}
+.revq{display:grid;gap:6px;margin-top:6px}
+.revq .f{display:grid;gap:4px;font-weight:700;font-size:14px}
+.revq .hint{display:block;font-weight:400}
+.revq textarea{width:100%;font:inherit;font-weight:400;font-size:16px;border:1.5px solid var(--ink);padding:6px;background:var(--surface);color:var(--ink);box-sizing:border-box}
+.revq .btn{justify-self:start}
 @media (prefers-reduced-motion: reduce){.revdot{animation:none}}
 .pend{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:var(--c-yellow);border:1.5px solid var(--ink);padding:0 5px;margin-top:3px}
 .chg{border-top:1.5px dashed var(--soft);padding:10px 0;display:grid;gap:4px}
@@ -697,7 +714,7 @@ ul.plain{margin:8px 0 0;padding-left:20px;display:grid;gap:6px}
 </nav>
 <div id="sheetRoot"></div><div id="ergRoot"></div>
 <div class="roar" id="roar" hidden aria-live="polite"></div>
-<script>window.EMBED_PLAN={"weeks": [{"title": "", "days": [{"d": "Mi", "date": "2026-10-14", "units": [{"title": "Rad Rolle 75 min mit Sweet Spot", "sport": "bike", "erg": [{"d": 300, "t": "Einfahren, locker steigern", "w": 120, "w1": 160}, {"d": 600, "t": "Einfahren, Grundlage", "w": 165}, {"d": 480, "t": "Sweet Spot 1/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 2/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 3/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 1200, "t": "Grundlage, HF ≤ 140", "w": 165}, {"d": 240, "t": "Ausfahren", "w": 140, "w1": 110}]}]}, {"d": "Do", "date": "2026-10-15", "units": [{"title": "Rad Rolle 75 min mit Sweet Spot", "sport": "bike", "erg": [{"d": 300, "t": "Einfahren, locker steigern", "w": 120, "w1": 160}, {"d": 600, "t": "Einfahren, Grundlage", "w": 165}, {"d": 480, "t": "Sweet Spot 1/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 2/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 3/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 1200, "t": "Grundlage, HF ≤ 140", "w": 165}, {"d": 240, "t": "Ausfahren", "w": 140, "w1": 110}]}]}]}, {"title": "", "days": [{"d": "Mi", "date": "2026-10-28", "units": [{"title": "Rad Rolle 60 min locker", "sport": "bike", "erg": [{"d": 600, "t": "Einfahren", "w": 120, "w1": 160}, {"d": 600, "t": "Grundlage", "w": 165}, {"d": 60, "t": "Hohe Trittfrequenz 1/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 60, "t": "Hohe Trittfrequenz 2/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 60, "t": "Hohe Trittfrequenz 3/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 60, "t": "Hohe Trittfrequenz 4/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 1380, "t": "Grundlage, HF ≤ 140", "w": 165}, {"d": 300, "t": "Ausfahren", "w": 140, "w1": 110}]}]}]}, {"title": "", "days": [{"d": "", "date": "", "units": [{"title": "Freie Fahrt", "sport": "bike", "erg": []}]}]}], "updated": "2026-10-15"};</script>
+<script>window.EMBED_PLAN={"weeks": [{"title": "", "days": [{"d": "Mi", "date": "2026-10-14", "units": [{"title": "Rad Rolle 75 min mit Sweet Spot", "sport": "bike", "erg": [{"d": 300, "t": "Einfahren, locker steigern", "w": 120, "w1": 160}, {"d": 600, "t": "Einfahren, Grundlage", "w": 165}, {"d": 480, "t": "Sweet Spot 1/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 2/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 3/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 1200, "t": "Grundlage, HF ≤ 140", "w": 165}, {"d": 240, "t": "Ausfahren", "w": 140, "w1": 110}]}]}, {"d": "Do", "date": "2026-10-15", "units": [{"title": "Rad Rolle 75 min mit Sweet Spot", "sport": "bike", "erg": [{"d": 300, "t": "Einfahren, locker steigern", "w": 120, "w1": 160}, {"d": 600, "t": "Einfahren, Grundlage", "w": 165}, {"d": 480, "t": "Sweet Spot 1/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 2/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 3/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 1200, "t": "Grundlage, HF ≤ 140", "w": 165}, {"d": 240, "t": "Ausfahren", "w": 140, "w1": 110}]}]}, {"d": "So", "date": "2026-10-18", "units": [{"title": "Rad Rolle 60 min mit Sweet Spot (optional)", "sport": "bike", "erg": [{"d": 300, "t": "Einfahren, locker steigern", "w": 120, "w1": 160}, {"d": 600, "t": "Einfahren, Grundlage", "w": 165}, {"d": 480, "t": "Sweet Spot 1/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 2/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 480, "t": "Sweet Spot 3/3 · 85–95 U/min", "w": 200}, {"d": 240, "t": "Pause, locker rollen", "w": 150}, {"d": 300, "t": "Grundlage, HF ≤ 140", "w": 160}, {"d": 240, "t": "Ausfahren", "w": 140, "w1": 110}]}]}]}, {"title": "", "days": [{"d": "Mi", "date": "2026-10-28", "units": [{"title": "Rad Rolle 60 min locker", "sport": "bike", "erg": [{"d": 600, "t": "Einfahren", "w": 120, "w1": 160}, {"d": 600, "t": "Grundlage", "w": 165}, {"d": 60, "t": "Hohe Trittfrequenz 1/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 60, "t": "Hohe Trittfrequenz 2/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 60, "t": "Hohe Trittfrequenz 3/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 60, "t": "Hohe Trittfrequenz 4/4 · 100+ U/min", "w": 150}, {"d": 120, "t": "Locker, normale Trittfrequenz", "w": 160}, {"d": 1380, "t": "Grundlage, HF ≤ 140", "w": 165}, {"d": 300, "t": "Ausfahren", "w": 140, "w1": 110}]}]}]}, {"title": "", "days": [{"d": "", "date": "", "units": [{"title": "Freie Fahrt", "sport": "bike", "erg": []}]}]}], "updated": "2026-10-18"};</script>
 <style>.stepper,nav.tabs{display:none!important}.rl-today{background:var(--tint)}.card .pu{margin-bottom:12px}</style>
 <script>
 const PHASES=[
@@ -1610,24 +1627,28 @@ let PLAN=null,PLAN_STATE="loading",FB={},FB_STATE="loading",PDB=null,FBDRAFT=nul
 const SPORT={swim:["Schwimmen","var(--s-swim)"],bike:["Rad","var(--s-bike)"],run:["Lauf","var(--s-run)"],kraft:["Kraft & Athletik","var(--c-core)"],rest:["Ruhe","var(--surface)"]};
 const isoDay=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function weekEdge(end){const d=new Date();const wd=(d.getDay()+6)%7;d.setDate(d.getDate()+(end?6-wd:-wd));return isoDay(d)}
-function planRender(){if(tab!=="plan")return;const a=document.activeElement;if(a&&a.closest&&(a.closest("#fbForm")||a.closest("#chgForm")||a.closest("#chkForm")))return;render()}
+function planRender(){if(tab!=="plan")return;const a=document.activeElement;if(a&&a.closest&&(a.closest("#fbForm")||a.closest("#chgForm")||a.closest("#chkForm")||a.closest(".revq")||a.closest("#xForm")))return;render()}
 async function initPlan(){
   try{
     const db=window.claude&&window.claude.use?await claude.use("db"):null;
     if(!db){if(window.EMBED_PLAN){PLAN=window.EMBED_PLAN;PLAN_STATE="ok";FB_STATE="off";render();return}PLAN_STATE=FB_STATE="off";if(tab==="plan")render();return}
     PDB=db;
     db.doc("coach/plan").onSnapshot(s=>{PLAN=s.exists?s.data():null;PLAN_STATE=PLAN?"ok":"empty";planRender()},()=>{PLAN_STATE="off";planRender()});
-    initChanges();initReviews();initChecks();initDone();
+    initChanges();initReviews();initExtras();initChecks();initDone();
     db.doc("coach/progress").onSnapshot(s=>{PROG=s.exists?s.data():null;if(tab==="fortschritt")render()},()=>{});
     db.collection("feedback").orderBy("week","desc").limit(12).onSnapshot(s=>{FB={};s.docs.forEach(d=>{FB[d.id]=d.data()});FB_STATE="ok";planRender()},()=>{FB_STATE="off";planRender()});
   }catch(e){PLAN_STATE=FB_STATE="off";if(tab==="plan")render()}
 }
-function planWeek(w,t,wi){
-  const days=(w.days||[]).map((d,di)=>{const isT=d.date===t,past=d.date&&d.date<t;
+function unitAt(ref){const [w0,di,ui]=String(ref).split(".");const W=w0&&w0[0]==="a"?((PLAN&&PLAN.archive)||[])[+w0.slice(1)]:PLAN&&PLAN.weeks[+w0];const d=W&&W.days&&W.days[+di];return{w:W,d,u:d&&d.units&&d.units[+ui]}}
+let PLANVIEW="kommend";
+function planWeek(w,t,wi,o={}){
+  let dl=(w.days||[]).map((d,di)=>[d,di]).filter(([d])=>!o.f||o.f(d));if(!dl.length)return"";if(o.rev)dl=dl.reverse();
+  const days=dl.map(([d,di])=>{const isT=d.date===t,past=d.date&&d.date<t;
     return `<div class="pday${isT?" today":""}${past?" past":""}"><div class="d">${esc(d.d||"")}<small>${d.date?fmtDate(d.date):""}</small></div><div class="units">${(d.units||[]).map((u,ui)=>{const sp=SPORT[u.sport]||SPORT.rest;
       const head=`<span class="spdot" style="background:${sp[1]}" title="${sp[0]}"></span><b>${esc(u.title||"")}</b>`;
       const pend=chgFor(d.date,u.title);
-      return `<div class="pu${doneOf(d.date,u.title)==="done"?" st-done":""}" data-uref="${wi}.${di}.${ui}"><div class="pu-row">${u.ses&&S[u.ses]?`<button class="pu-h" data-open="${u.ses}">${head}<span class="arrow">›</span></button>`:`<div class="pu-h">${head}</div>`}${past?"":`<button class="pu-edit" data-chg="${wi}.${di}.${ui}" aria-label="${esc(u.title||"Einheit")} ändern, verschieben oder streichen">✎</button>`}</div>${pend?`<span class="pend">${pend.status==="vorschlag"?"Vorschlag von Claude, siehe oben":"Änderung angefragt"}</span>`:""}${u.note?`<p>${esc(u.note)}</p>`:""}${u.why?`<p class="why"><b>Wozu:</b> ${esc(u.why)}</p>`:""}${u.fuel?`<p class="why"><b style="color:var(--c-power)">Verpflegung:</b> ${esc(u.fuel)}</p>`:""}${u.sport==="bike"&&(u.erg||/rolle/i.test(u.title||""))?`<button class="ergbtn" data-ergopen="${wi}.${di}.${ui}">${u.erg?"Auf der Rolle fahren":"Rolle frei steuern"}</button>`:""}${tickRow(d,u,`${wi}.${di}.${ui}`,t)}${revBlock(d,u,wi,di,ui,t)}</div>`}).join("")}${past?"":`<button class="pu-add" data-chg="${wi}.${di}.-1" data-uref="${wi}.${di}.-1">+ Einheit</button>`}</div></div>`}).join("");
+      return `<div class="pu${doneOf(d.date,u.title)==="done"?" st-done":""}" data-uref="${wi}.${di}.${ui}"><div class="pu-row">${u.ses&&S[u.ses]?`<button class="pu-h" data-open="${u.ses}">${head}<span class="arrow">›</span></button>`:`<div class="pu-h">${head}</div>`}${past?"":`<button class="pu-edit" data-chg="${wi}.${di}.${ui}" aria-label="${esc(u.title||"Einheit")} ändern, verschieben oder streichen">✎</button>`}</div>${pend?`<span class="pend">${pend.status==="vorschlag"?"Vorschlag von Claude, siehe oben":"Änderung angefragt"}</span>`:""}${u.note?`<p>${esc(u.note)}</p>`:""}${u.why?`<p class="why"><b>Wozu:</b> ${esc(u.why)}</p>`:""}${u.fuel?`<p class="why"><b style="color:var(--c-power)">Verpflegung:</b> ${esc(u.fuel)}</p>`:""}${!past&&u.sport==="bike"&&(u.erg||/rolle/i.test(u.title||""))?`<button class="ergbtn" data-ergopen="${wi}.${di}.${ui}">${u.erg?"Auf der Rolle fahren":"Rolle frei steuern"}</button>`:""}${tickRow(d,u,`${wi}.${di}.${ui}`,t)}${revBlock(d,u,wi,di,ui,t)}</div>`}).join("")}${extrasFor(d,t)}<div class="addrow">${past?"":`<button class="pu-add" data-chg="${wi}.${di}.-1" data-uref="${wi}.${di}.-1">+ Einheit planen</button>`}${d.date&&d.date<=t?`<button class="pu-add" data-xadd="${d.date}">+ Gemacht nachtragen</button>`:""}</div></div></div>`}).join("");
+  if(o.title)return `<div class="card todaycard">${dd("bolt","corner y")}<div class="wk-h"><h3>${esc(o.title)}</h3></div><div style="margin-top:6px">${days}</div></div>`;
   return `<div class="card">${dd(w.tentative?"spiral":"star","corner "+(w.tentative?"v":"o"))}<div class="wk-h"><h3>${esc(w.title||"")}</h3>${w.total?`<span class="mono muted">${esc(w.total)}</span>`:""}</div>${w.sum&&w.sum.length?`<div class="chips" style="margin-top:6px">${w.sum.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`:""}${kqChip(w)}${w.note?`<p class="muted" style="font-size:14px;margin-top:6px">${esc(w.note)}</p>`:""}<div style="margin-top:6px">${days}</div></div>`;
 }
 
@@ -1636,19 +1657,71 @@ function planWeek(w,t,wi){
 let REV={};
 const REV_SPORTS=["bike","run","swim","kraft"];
 function revFor(date,title){return Object.values(REV).filter(r=>r.date===date&&r.unit===title).sort((a,b)=>(b.created||"").localeCompare(a.created||""))[0]}
-function revBlock(d,u,wi,di,ui,t){
+function revBlock(d,u,wi,di,ui,t,xref){
   if(!d.date||d.date>t||!REV_SPORTS.includes(u.sport))return"";
-  const r=revFor(d.date,u.title),ref=`${wi}.${di}.${ui}`;
+  const r=revFor(d.date,u.title),ref=xref||`${wi}.${di}.${ui}`;
   if(r&&r.status==="angefragt")return`<div class="rev wait"><span class="revdot" aria-hidden="true"></span>Claude holt die Einheit aus Strava und wertet sie aus …</div>`;
   if(r&&r.status==="fertig"){
     const st=(r.stats||[]).map(x=>`<span><small>${esc(x.k)}</small><b>${esc(x.v)}</b></span>`).join("");
-    return`<div class="rev"><div class="rev-h"><strong>Auswertung von Claude</strong>${r.verdict?`<span class="tag-st">${esc(r.verdict)}</span>`:""}</div>${r.activity?`<p class="muted" style="font-size:12.5px;margin:2px 0 0">Strava: ${esc(r.activity)}</p>`:""}${st?`<div class="revstats">${st}</div>`:""}${r.text?`<p>${esc(r.text)}</p>`:""}${r.next?`<p class="why"><b>Für die nächsten Tage:</b> ${esc(r.next)}</p>`:""}<button class="pu-add" data-rev="${ref}">Neu auswerten</button></div>`}
+    return`<div class="rev"><div class="rev-h"><strong>Auswertung von Claude</strong>${r.verdict?`<span class="tag-st">${esc(r.verdict)}</span>`:""}</div>${r.activity?`<p class="muted" style="font-size:12.5px;margin:2px 0 0">Strava: ${esc(r.activity)}</p>`:""}${st?`<div class="revstats">${st}</div>`:""}${r.text?`<p>${esc(r.text)}</p>`:""}${r.next?`<p class="why"><b>Für die nächsten Tage:</b> ${esc(r.next)}</p>`:""}${revTalk(r)}<button class="pu-add" data-rev="${ref}">Neu auswerten</button></div>`}
   if(r&&r.status==="nichtgefunden")return`<div class="rev"><p class="muted" style="margin:0">${esc(r.text||"In Strava keine passende Aktivität gefunden.")}</p><button class="pu-add" data-rev="${ref}">Nochmal versuchen</button></div>`;
   return`<button class="revbtn" data-rev="${ref}">Mit Strava auswerten</button>`;
 }
+function revTalk(r){
+  const m=(r.msgs||[]).map(x=>`<div class="rmsg ${x.from==="claude"?"c":"m"}"><small>${x.from==="claude"?"Claude":"Du"}${x.at?" · "+fmtDate(String(x.at).slice(0,10)):""}</small><p>${esc(x.text||"")}</p></div>`).join("");
+  const wait=(r.msgs||[]).length&&r.msgs[r.msgs.length-1].from!=="claude";
+  return`<div class="rtalk">${m}${wait?`<p class="hint" style="margin:4px 0 0">Claude hat deine Antwort bekommen und meldet sich hier.</p>`:""}<form class="revq" data-revq="${esc(r.id)}"><label class="f">Antwort an Claude<span class="hint">z. B. was du gegessen hast oder wie es sich angefühlt hat</span><textarea rows="2" maxlength="800" placeholder="z. B. 2 Riegel, 1 Gel, 1,5 l Iso"></textarea></label><button class="btn dark" type="submit">Antwort senden</button></form></div>`}
+async function sendRevAnswer(form){
+  const id=form.dataset.revq,r=REV[id],ta=form.querySelector("textarea"),txt=(ta.value||"").trim(),btn=form.querySelector("button");
+  if(!r||!txt){ta.focus();return}
+  btn.disabled=true;
+  if(CM&&CAN_SEND!=="available")CAN_SEND=await CM.canSendToClaude().catch(()=>"off");
+  let sent=false;const text=`Antwort zur Auswertung ${id}\nEinheit: ${r.unit} (${fmtDate(r.date)})\n${txt}`;
+  try{if(CM&&CAN_SEND==="available"){if(r.threadId){try{await CM.sendToClaude({threadId:r.threadId,text});sent=true}catch(e){}}
+    if(!sent){const el=form.closest("[data-uref]")||document.getElementById("app");const anchor=await CM.anchorFor(el);await CM.sendToClaude({anchor,text});sent=true}}}catch(e){}
+  if(!sent){btn.disabled=false;roar("Senden hat nicht geklappt. Schreib Claude die Antwort kurz im Chat.");return}
+  const msgs=(r.msgs||[]).concat([{from:"marcel",text:txt,at:new Date().toISOString()}]);
+  try{if(PDB)await PDB.collection("reviews").doc(id).update({msgs})}catch(e){}
+  ta.value="";btn.disabled=false;if(document.activeElement)document.activeElement.blur();
+  roar("Antwort ist bei Claude.");planRender();
+}
+/* ---------- Nachgetragene Einheiten (extras/<id>): was zusätzlich gemacht wurde ---------- */
+let EXT={};
+function initExtras(){try{if(PDB)PDB.collection("extras").orderBy("created","desc").limit(60).onSnapshot(s=>{EXT={};s.docs.forEach(d=>{EXT[d.id]=d.data()});planRender()},()=>{})}catch(e){}}
+function extrasFor(d,t){
+  if(!d.date)return"";
+  return Object.values(EXT).filter(x=>x.date===d.date).sort((a,b)=>(a.created||"").localeCompare(b.created||"")).map(x=>{const sp=SPORT[x.sport]||SPORT.rest;
+    return`<div class="pu xunit" data-uref="x:${esc(x.id)}"><div class="pu-row"><div class="pu-h"><span class="spdot" style="background:${sp[1]}" title="${sp[0]}"></span><b>${esc(x.title)}</b></div><button class="pu-edit" data-xdel="${esc(x.id)}" aria-label="${esc(x.title)} löschen">×</button></div><span class="pend xtag">Nachgetragen</span>${x.note?`<p>${esc(x.note)}</p>`:""}${revBlock(d,{title:x.title,sport:x.sport},0,0,0,t,"x:"+x.id)}</div>`}).join("")}
+function openExtra(date){
+  const wd=["So","Mo","Di","Mi","Do","Fr","Sa"][new Date(date+"T12:00:00").getDay()];
+  document.getElementById("sheetRoot").innerHTML=`<div class="scrim" data-close><div class="sheet" role="dialog" aria-modal="true" aria-label="Einheit nachtragen">
+    <div class="grab"></div>
+    <div class="hd"><div><span class="label">${wd} ${fmtDate(date)}</span><h2 style="margin-top:4px">Einheit nachtragen</h2></div><button class="x" data-close aria-label="Schließen">×</button></div>
+    <form class="fb" id="xForm" data-date="${date}">
+      <div class="f">Sportart<div class="seg">${["swim","bike","run","kraft"].map((k,i)=>`<label><input type="radio" name="xSport" value="${k}"${i===0?" checked":""}><span>${SPORT[k][0]}</span></label>`).join("")}</div></div>
+      <label class="f" for="xMin">Dauer in Minuten<input id="xMin" class="sel" type="number" inputmode="numeric" min="1" max="600" placeholder="z. B. 40"></label>
+      <label class="f" for="xNote">Was hast du gemacht?<span class="hint">Optional. Mit „Mit Strava auswerten“ holt Claude danach die Daten.</span><textarea id="xNote" rows="2" maxlength="400" placeholder="z. B. 1.500 m locker nach dem Radfahren"></textarea></label>
+      <button class="btn dark big" type="submit">Eintragen</button>
+    </form></div></div>`;
+  const f=document.getElementById("xForm");f.onsubmit=ev=>{ev.preventDefault();saveExtra(f)};
+}
+async function saveExtra(f){
+  const sport=(f.querySelector('input[name="xSport"]:checked')||{}).value||"swim";
+  const min=parseInt(document.getElementById("xMin").value,10);const note=(document.getElementById("xNote").value||"").trim();
+  const id="x"+Date.now().toString(36);
+  const title=`${SPORT[sport][0]}${min>0?" "+min+" min":""} (nachgetragen)`;
+  const doc={id,created:new Date().toISOString(),date:f.dataset.date,sport,title,min:min>0?min:null,note};
+  f.querySelector('button[type="submit"]').disabled=true;
+  try{if(!PDB)throw 0;await PDB.collection("extras").doc(id).set(doc)}catch(e){f.querySelector('button[type="submit"]').disabled=false;roar("Speichern hat nicht geklappt.");return}
+  closeSheet();roar("Eingetragen. Tipp auf „Mit Strava auswerten“, wenn Claude sie anschauen soll.");
+}
+async function delExtra(id){const x=EXT[id];if(!x||!confirm(`„${x.title}“ löschen?`))return;try{if(PDB)await PDB.collection("extras").doc(id).delete()}catch(e){roar("Löschen hat nicht geklappt.")}}
 function initReviews(){try{if(PDB)PDB.collection("reviews").orderBy("created","desc").limit(40).onSnapshot(s=>{REV={};s.docs.forEach(d=>{REV[d.id]=d.data()});planRender()},()=>{})}catch(e){}}
 async function sendReview(ref,btn){
-  const [wi,di,ui]=ref.split(".").map(Number);const w=PLAN&&PLAN.weeks[wi],d=w&&w.days[di],u=d&&d.units[ui];if(!u)return;
+  let d,u;
+  if(ref.startsWith("x:")){const x=EXT[ref.slice(2)];if(!x)return;d={date:x.date,d:["So","Mo","Di","Mi","Do","Fr","Sa"][new Date(x.date+"T12:00:00").getDay()]};u={title:x.title,sport:x.sport,note:x.note||""}}
+  else{({d,u}=unitAt(ref))}
+  if(!u)return;
   if(btn)btn.disabled=true;
   if(CM&&CAN_SEND!=="available")CAN_SEND=await CM.canSendToClaude().catch(()=>"off");
   const id="r"+Date.now().toString(36);
@@ -1735,19 +1808,25 @@ function vPlan(){
   const t=today();let body;
   if(PLAN_STATE==="loading")body=`<div class="card empty">${dino("run")}<p><b>Plan wird geladen …</b></p></div>`;
   else if(PLAN_STATE!=="ok")body=`<div class="card empty">${dino("sleep")}<p><b>${PLAN_STATE==="empty"?"Noch kein Plan eingetragen.":"Plan gerade nicht erreichbar."}</b></p><p class="muted" style="font-size:14px">${PLAN_STATE==="empty"?"Claude trägt hier immer die nächsten zwei Wochen ein.":"Der Plan liegt in deinem Claude-Konto. Öffne die App angemeldet in claude.ai oder in der Claude-App."}</p></div>`;
+  else if(PLANVIEW==="historie"){const P=PLAN,arch=(P.archive||[]).map((w,i)=>[w,"a"+i]),cur=(P.weeks||[]).map((w,i)=>[w,i]);
+    const hw=arch.concat(cur).filter(([w])=>(w.days||[]).some(d=>d.date&&d.date<t)).reverse();
+    body=`${planSeg()}<p class="muted" style="font-size:14px;margin:4px 0 8px">Alle vergangenen Tage, neueste oben. Hier kannst du abhaken, nachtragen und auswerten lassen.</p>${hw.map(([w,i])=>planWeek(w,t,i,{f:d=>d.date&&d.date<t,rev:true})).join("")||`<div class="card empty">${dino("sleep")}<p><b>Noch keine vergangenen Einheiten.</b></p></div>`}`}
   else{const P=PLAN,weeks=(P.weeks||[]).map((w,i)=>[w,i]).filter(([w])=>!w.end||w.end>=t);
-    body=`<div class="card hello">${dino("run")}<div class="bubble">${esc(P.headline||"Deine nächsten zwei Wochen")}<small>${esc(P.phase||"")}${P.updated?` · Stand ${fmtDate(P.updated)}`:""}</small></div></div>
+    const todayHtml=weeks.map(([w,i])=>planWeek(w,t,i,{f:d=>d.date===t,title:"Heute · "+(((w.days||[]).find(d=>d.date===t)||{}).d||"")+" "+fmtDate(t)})).join("");
+    body=`${planSeg()}${checkCard()}${todayHtml}
+    ${chgCard()}
+    ${weeks.map(([w,i])=>planWeek(w,t,i,{f:d=>!d.date||d.date>t})).join("")}
+    <div class="card hello">${dino("run")}<div class="bubble">${esc(P.headline||"Deine nächsten zwei Wochen")}<small>${esc(P.phase||"")}${P.updated?` · Stand ${fmtDate(P.updated)}`:""}</small></div></div>
     ${P.intro?`<p style="font-size:15px">${esc(P.intro)}</p>`:""}
     <div class="sportkey">${Object.values(SPORT).map(([n,c])=>`<span><i class="spdot" style="background:${c}"></i>${n}</span>`).join("")}<span><b style="text-decoration:underline;text-decoration-color:var(--c-core);text-decoration-thickness:2px">unterstrichen</b>&nbsp;= Einheit öffnen</span><span><b>✎</b>&nbsp;= ändern, verschieben, streichen</span></div>
-    ${checkCard()}
-    ${chgCard()}
-    ${weeks.map(([w,i])=>planWeek(w,t,i)).join("")||`<div class="card empty">${dino("sleep")}<p><b>Die geplanten Wochen sind vorbei.</b></p><p class="muted" style="font-size:14px">Schick deine Rückmeldung, dann kommen die nächsten zwei Wochen.</p></div>`}
+    ${weeks.length?"":`<div class="card empty">${dino("sleep")}<p><b>Die geplanten Wochen sind vorbei.</b></p><p class="muted" style="font-size:14px">Schick deine Rückmeldung, dann kommen die nächsten zwei Wochen.</p></div>`}
     ${seasonCard()}
     ${P.zones&&P.zones.length?`<div class="card">${dd("bolt","corner y")}<h3>Deine Trainingswerte</h3>${P.zonesNote?`<p class="muted" style="font-size:14px;margin-top:2px">${esc(P.zonesNote)}</p>`:""}<div class="zones">${P.zones.map(z=>`<div class="zrow"><span class="spdot" style="background:${(SPORT[z.sport]||SPORT.rest)[1]}"></span><b>${esc(z.label)}</b><span class="mono">${esc(z.value)}</span></div>`).join("")}</div></div>`:""}
     ${P.travel&&P.travel.length?`<div class="card">${dd("heart","corner r")}<h3>Unterwegs? Reise-Variante</h3><ul class="plain">${P.travel.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
     ${P.brakes&&P.brakes.length?`<div class="card">${dd("arrow","corner k thin")}<h3>Wann du bremst</h3><ul class="rules" style="margin-top:10px">${P.brakes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}`}
-  return `<section class="view">${body}${fbCard()}</section>`;
+  return `<section class="view">${body}${PLANVIEW==="historie"?"":fbCard()}</section>`;
 }
+function planSeg(){return`<div class="planseg" role="tablist" aria-label="Plan">${[["kommend","Heute & kommend"],["historie","Trainingshistorie"]].map(([k,l])=>`<button role="tab" aria-selected="${PLANVIEW===k}" data-pv="${k}">${l}</button>`).join("")}</div>`}
 const FB_LABELS=[["fatigue","Müdigkeit (1–10)"],["sleep","Schlaf"],["pain","Beschwerden"],["missed","Ausgefallen / geändert"],["runs","Läufe"],["travel","Reisetage"],["notes","Sonstiges"]];
 function fbCard(){
   const wk=weekEdge(true),mon=weekEdge(false),cur=FB[wk];
@@ -1854,7 +1933,7 @@ function weekStats(w){const t=today();let planned=0,due=0,done=0,changed=0,misse
   return{planned,due,done,changed,missed,rate:due?Math.round((done+changed*.5)/due*100):null}}
 function weekMonday(w){const d=new Date((w.end||today())+"T12:00:00");d.setDate(d.getDate()-6);return isoDay(d)}
 async function setTick(ref,status){
-  const [wi,di,ui]=ref.split(".").map(Number),w=PLAN&&PLAN.weeks[wi],d=w&&w.days[di],u=d&&d.units[ui];if(!u||!PDB)return;
+  const {d,u}=unitAt(ref);if(!u||!PDB)return;
   const id=doneId(d.date,u.title),cur=doneOf(d.date,u.title),next=cur===status?"none":status;
   const doc={date:d.date,unit:u.title,sport:u.sport,status:next,at:new Date().toISOString()};
   DONE[id]=doc;render();
@@ -2032,7 +2111,7 @@ function ergRender(){
      ${E.mode&&!E.sim?"":`<button class="btn dark" data-erg="connect"${bt?"":" disabled"}>Rolle verbinden</button>${bt?`<button class="btn" data-erg="connectall">Alle Geräte zeigen</button>`:""}`}
      <span class="st ${E.hrDev?"on":""}"><i></i>${E.hrDev?"Pulsgurt verbunden":"Pulsgurt nicht verbunden"}</span>${E.hrDev||!bt?"":`<button class="btn" data-erg="hr">Pulsgurt verbinden</button>`}
      ${E.mode?"":`<button class="btn" data-erg="sim">Ohne Rolle testen</button>`}
-     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 27</small>
+     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 30</small>
    </div>
    ${E.sim?`<p class="erg-msg sim">Testmodus: Watt und Trittfrequenz sind nur simuliert, die Rolle ist nicht verbunden. Mit „Rolle verbinden“ wechselst du zur echten Rolle.</p>`:""}
    ${bt?"":`<p class="erg-msg">Dieser Browser kann kein Bluetooth. Auf dem iPad öffne die App in „Bluefy“ (kostenlos im App Store), am Laptop in Chrome. Mit „Ohne Rolle testen“ kannst du dir den Ablauf trotzdem ansehen.</p>`}
@@ -2301,11 +2380,15 @@ function render(){
     ck.onsubmit=ev=>{ev.preventDefault();saveChk(ck.querySelector('button[type="submit"]'))}}
   if(bw)bw.onsubmit=ev=>{ev.preventDefault();const v=parseFloat(String(document.getElementById("bwIn").value).replace(",","."));if(!(v>30&&v<250))return;ST.body=ST.body.filter(x=>x.d!==today());ST.body.push({d:today(),kg:Math.round(v*10)/10});ST.body=ST.body.slice(-200);persist("prefs");render();roar(`${String(v).replace(".",",")} kg eingetragen`)};
 }
+document.getElementById("app").addEventListener("submit",ev=>{const f=ev.target.closest&&ev.target.closest("form.revq");if(f){ev.preventDefault();sendRevAnswer(f)}});
 document.getElementById("app").addEventListener("click",ev=>{
   const w=ev.target.closest("i[data-w]");if(w){setWeek(+w.dataset.w);return}
   const t=ev.target.closest("button");if(!t)return;
   if(t.dataset.setweek){setWeek(+t.dataset.setweek);return}
   if(t.dataset.rev!==undefined&&PLAN){sendReview(t.dataset.rev,t);return}
+  if(t.dataset.pv){PLANVIEW=t.dataset.pv;render();window.scrollTo(0,0);return}
+  if(t.dataset.xadd){openExtra(t.dataset.xadd);return}
+  if(t.dataset.xdel){delExtra(t.dataset.xdel);return}
   if(t.dataset.ergopen&&PLAN){openErg(t.dataset.ergopen);return}
   if(t.dataset.tick&&PLAN){const [r,st]=t.dataset.tick.split("|");setTick(r,st);return}
   if(t.dataset.dc){CHKEDIT=t.dataset.dc==="edit";CHKDRAFT=null;render();return}
