@@ -1627,14 +1627,14 @@ let PLAN=null,PLAN_STATE="loading",FB={},FB_STATE="loading",PDB=null,FBDRAFT=nul
 const SPORT={swim:["Schwimmen","var(--s-swim)"],bike:["Rad","var(--s-bike)"],run:["Lauf","var(--s-run)"],kraft:["Kraft & Athletik","var(--c-core)"],rest:["Ruhe","var(--surface)"]};
 const isoDay=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function weekEdge(end){const d=new Date();const wd=(d.getDay()+6)%7;d.setDate(d.getDate()+(end?6-wd:-wd));return isoDay(d)}
-function planRender(){if(tab!=="plan")return;const a=document.activeElement;if(a&&a.closest&&(a.closest("#fbForm")||a.closest("#chgForm")||a.closest("#chkForm")||a.closest(".revq")||a.closest("#xForm")))return;render()}
+function planRender(){if(tab!=="plan")return;const a=document.activeElement;if(a&&a.closest&&(a.closest("#fbForm")||a.closest("#chgForm")||a.closest("#chkForm")||a.closest(".revq")||a.closest("#xForm")||a.closest("#rideForm")))return;render()}
 async function initPlan(){
   try{
     const db=window.claude&&window.claude.use?await claude.use("db"):null;
     if(!db){if(window.EMBED_PLAN){PLAN=window.EMBED_PLAN;PLAN_STATE="ok";FB_STATE="off";render();return}PLAN_STATE=FB_STATE="off";if(tab==="plan")render();return}
     PDB=db;
     db.doc("coach/plan").onSnapshot(s=>{PLAN=s.exists?s.data():null;PLAN_STATE=PLAN?"ok":"empty";planRender()},()=>{PLAN_STATE="off";planRender()});
-    initChanges();initReviews();initExtras();initChecks();initDone();
+    initChanges();initReviews();initExtras();initRides();initChecks();initDone();
     db.doc("coach/progress").onSnapshot(s=>{PROG=s.exists?s.data():null;if(tab==="fortschritt")render()},()=>{});
     db.collection("feedback").orderBy("week","desc").limit(12).onSnapshot(s=>{FB={};s.docs.forEach(d=>{FB[d.id]=d.data()});FB_STATE="ok";planRender()},()=>{FB_STATE="off";planRender()});
   }catch(e){PLAN_STATE=FB_STATE="off";if(tab==="plan")render()}
@@ -1664,8 +1664,12 @@ function revBlock(d,u,wi,di,ui,t,xref){
   if(r&&r.status==="fertig"){
     const st=(r.stats||[]).map(x=>`<span><small>${esc(x.k)}</small><b>${esc(x.v)}</b></span>`).join("");
     return`<div class="rev"><div class="rev-h"><strong>Auswertung von Claude</strong>${r.verdict?`<span class="tag-st">${esc(r.verdict)}</span>`:""}</div>${r.activity?`<p class="muted" style="font-size:12.5px;margin:2px 0 0">Strava: ${esc(r.activity)}</p>`:""}${st?`<div class="revstats">${st}</div>`:""}${r.text?`<p>${esc(r.text)}</p>`:""}${r.next?`<p class="why"><b>Für die nächsten Tage:</b> ${esc(r.next)}</p>`:""}${revTalk(r)}<button class="pu-add" data-rev="${ref}">Neu auswerten</button></div>`}
-  if(r&&r.status==="nichtgefunden")return`<div class="rev"><p class="muted" style="margin:0">${esc(r.text||"In Strava keine passende Aktivität gefunden.")}</p><button class="pu-add" data-rev="${ref}">Nochmal versuchen</button></div>`;
-  return`<button class="revbtn" data-rev="${ref}">Mit Strava auswerten</button>`;
+  if(r&&r.status==="nichtgefunden"){const rd0=u.sport==="bike"?rideFor(d.date,u.title):null;
+    if(rd0)return`${rideLine(rd0)}<button class="revbtn" data-rev="${ref}">Auswerten</button>`;
+    return`<div class="rev"><p class="muted" style="margin:0">${esc(r.text||"In Strava keine passende Aktivität gefunden.")}</p><button class="pu-add" data-rev="${ref}">Nochmal versuchen</button>${u.sport==="bike"&&!String(ref).startsWith("x:")?` <button class="pu-add" data-ridepaste="${ref}">Rollen-Fahrt einfügen</button>`:""}</div>`}
+  const rd=u.sport==="bike"?rideFor(d.date,u.title):null;
+  if(rd)return`${rideLine(rd)}<button class="revbtn" data-rev="${ref}">Auswerten</button>`;
+  return`<button class="revbtn" data-rev="${ref}">Mit Strava auswerten</button>${u.sport==="bike"&&!String(ref).startsWith("x:")?` <button class="pu-add" data-ridepaste="${ref}">Rollen-Fahrt einfügen</button>`:""}`;
 }
 function revTalk(r){
   const m=(r.msgs||[]).map(x=>`<div class="rmsg ${x.from==="claude"?"c":"m"}"><small>${x.from==="claude"?"Claude":"Du"}${x.at?" · "+fmtDate(String(x.at).slice(0,10)):""}</small><p>${esc(x.text||"")}</p></div>`).join("");
@@ -1685,6 +1689,37 @@ async function sendRevAnswer(form){
   ta.value="";btn.disabled=false;if(document.activeElement)document.activeElement.blur();
   roar("Antwort ist bei Claude.");planRender();
 }
+/* ---------- Rollen-Fahrten (rides/<id>): in der App direkt, von der Rollen-Seite per Kopieren/Einfügen ---------- */
+let RIDES={};
+function initRides(){try{if(PDB)PDB.collection("rides").orderBy("start","desc").limit(40).onSnapshot(s=>{RIDES={};s.docs.forEach(d=>{RIDES[d.id]=d.data()});planRender()},()=>{})}catch(e){}}
+function rideFor(date,unit){return Object.values(RIDES).filter(r=>r.date===date&&r.unit===unit&&!r.sim).sort((a,b)=>(b.start||"").localeCompare(a.start||""))[0]}
+function rideCode(rec){return"KPRIDE1:"+btoa(unescape(encodeURIComponent(JSON.stringify(rec))))}
+function parseRide(txt){const m=String(txt||"").match(/KPRIDE1:([A-Za-z0-9+\/=]+)/);if(!m)return null;try{return JSON.parse(decodeURIComponent(escape(atob(m[1]))))}catch(e){return null}}
+async function copyRide(rec){const code=rideCode(rec);
+  try{await navigator.clipboard.writeText(code);roar("Kopiert! Jetzt die Coach-App öffnen und bei der Einheit „Rollen-Fahrt einfügen“ tippen.");return}catch(e){}
+  const root=document.getElementById("sheetRoot");root.innerHTML=`<div class="scrim" data-close style="z-index:200"><div class="sheet" role="dialog" aria-modal="true" aria-label="Fahrt kopieren"><div class="grab"></div><div class="hd"><h2>Fahrt kopieren</h2><button class="x" data-close aria-label="Schließen">×</button></div><p style="font-size:14px">Automatisches Kopieren geht hier nicht. Tippe in das Feld, wähle „Alles auswählen“ und dann „Kopieren“.</p><textarea id="rideCodeTa" rows="6" readonly style="width:100%;font-size:12px">${esc(code)}</textarea></div></div>`;
+  const ta=document.getElementById("rideCodeTa");ta.focus();ta.select()}
+function rideLine(r){return`<p class="muted" style="font-size:12.5px;margin:4px 0 0">Rollen-Fahrt gespeichert: ${Math.round((r.secs||0)/60)} min · Ø ${r.avgW||"–"} W${r.avgHr?" · Ø HF "+r.avgHr:""}</p>`}
+function openRidePaste(ref){
+  const {d,u}=unitAt(ref);if(!u)return;
+  document.getElementById("sheetRoot").innerHTML=`<div class="scrim" data-close><div class="sheet" role="dialog" aria-modal="true" aria-label="Rollen-Fahrt einfügen">
+    <div class="grab"></div>
+    <div class="hd"><div><span class="label">${esc(d.d||"")} ${fmtDate(d.date)}</span><h2 style="margin-top:4px">Rollen-Fahrt einfügen</h2></div><button class="x" data-close aria-label="Schließen">×</button></div>
+    <form class="fb" id="rideForm" data-ref="${ref}">
+      <label class="f" for="rideIn">Fahrt von der Rollen-Seite<span class="hint">Auf der Rollen-Seite „Für die Coach-App kopieren“ tippen, dann hier lange ins Feld tippen und „Einsetzen“ wählen.</span><textarea id="rideIn" rows="4" placeholder="KPRIDE1:…" style="font-size:13px"></textarea></label>
+      <button class="btn dark big" type="submit">Speichern</button><p class="hint" id="rideHint"></p>
+    </form></div></div>`;
+  const f=document.getElementById("rideForm");f.onsubmit=async ev=>{ev.preventDefault();const r=parseRide(document.getElementById("rideIn").value),h=document.getElementById("rideHint");
+    if(!r){h.textContent="Das sieht nicht nach einer kopierten Fahrt aus. Bitte nochmal auf der Rollen-Seite kopieren.";return}
+    const rec={...r,id:r.id||("ride"+Date.now().toString(36)),date:d.date,unit:u.title,origUnit:r.unit||"",origDate:r.date||"",via:"rollen-seite",sim:!!r.sim};
+    if(rec.sim){h.textContent="Das war eine Testfahrt ohne Rolle. Die speichere ich nicht.";return}
+    try{if(!PDB)throw 0;await PDB.collection("rides").doc(rec.id).set(rec)}catch(e){h.textContent="Speichern hat nicht geklappt.";return}
+    closeSheet();roar("Fahrt gespeichert. Tippe jetzt auf „Auswerten“.")};
+  document.getElementById("rideIn").focus();
+}
+function savedRidesCard(){let L=[];try{L=JSON.parse(localStorage.getItem("kp_rides")||"[]")}catch(e){}
+  L=L.map((r,i)=>[r,i]).filter(([r])=>!r.sim).reverse().slice(0,8);if(!L.length)return"";
+  return`<div class="card"><h3>Gespeicherte Fahrten</h3><p class="muted" style="font-size:14px;margin-top:4px">Damit Claude eine Fahrt auswerten kann: kopieren und in der Coach-App bei der Einheit unter „Rollen-Fahrt einfügen“ einsetzen.</p>${L.map(([r,i])=>`<div class="pu"><div class="pu-row"><div class="pu-h"><span class="spdot" style="background:var(--s-bike)"></span><b>${esc(r.unit||"Fahrt")}</b></div></div><p class="muted" style="font-size:13px">${r.date?fmtDate(r.date):""} · ${Math.round((r.secs||0)/60)} min · Ø ${r.avgW||"–"} W${r.avgHr?" · Ø HF "+r.avgHr:""}</p><button class="ergbtn" data-ridecopy="${i}">Für die Coach-App kopieren</button></div>`).join("")}</div>`}
 /* ---------- Nachgetragene Einheiten (extras/<id>): was zusätzlich gemacht wurde ---------- */
 let EXT={};
 function initExtras(){try{if(PDB)PDB.collection("extras").orderBy("created","desc").limit(60).onSnapshot(s=>{EXT={};s.docs.forEach(d=>{EXT[d.id]=d.data()});planRender()},()=>{})}catch(e){}}
@@ -1725,8 +1760,9 @@ async function sendReview(ref,btn){
   if(btn)btn.disabled=true;
   if(CM&&CAN_SEND!=="available")CAN_SEND=await CM.canSendToClaude().catch(()=>"off");
   const id="r"+Date.now().toString(36);
-  const text=`Strava-Auswertung ${id}\nEinheit: ${u.title} (${d.d} ${fmtDate(d.date)})${u.note?`\nGeplant: ${u.note}`:""}`;
-  const doc={id,created:new Date().toISOString(),date:d.date,unit:u.title,sport:u.sport,status:"angefragt"};
+  const rd=u.sport==="bike"?rideFor(d.date,u.title):null;
+  const text=`${rd?"Rollen-Auswertung":"Strava-Auswertung"} ${id}\nEinheit: ${u.title} (${d.d} ${fmtDate(d.date)})${rd?`\nRollen-Fahrt in der App: rides/${rd.id}`:""}${u.note?`\nGeplant: ${u.note}`:""}`;
+  const doc={id,created:new Date().toISOString(),date:d.date,unit:u.title,sport:u.sport,status:"angefragt"};if(rd)doc.rideId=rd.id;
   let sent=false;
   try{if(CM&&CAN_SEND==="available"){const el=document.querySelector(`[data-uref="${ref}"]`)||document.getElementById("app");const anchor=await CM.anchorFor(el);const r=await CM.sendToClaude({anchor,text});doc.threadId=r.threadId;sent=true}}catch(e){}
   if(!sent){if(btn)btn.disabled=false;roar("Senden hat nicht geklappt. Schreib Claude kurz im Chat: „Werte "+u.title+" vom "+fmtDate(d.date)+" aus“.");return}
@@ -2100,8 +2136,8 @@ function ergRender(){
     root.innerHTML=`<div class="erg" role="dialog" aria-modal="true" aria-label="Rolle"><div class="erg-h"><h2>Geschafft!<small>${esc(E.unit)}</small></h2><button class="btn" data-erg="close">Schließen</button></div>
      <div class="erg-done">${dino("flex",120)}</div>
      <div class="erg-sum"><div><span class="label">Zeit</span><b>${mmss(S.secs)}</b></div><div><span class="label">Ø Watt</span><b>${S.avgW}</b></div><div><span class="label">NP</span><b>${S.np}</b></div><div><span class="label">Ø Kadenz</span><b>${S.avgCad||"–"}</b></div><div><span class="label">Ø Puls</span><b>${S.avgHr||"–"}</b></div><div><span class="label">Arbeit</span><b>${S.kj} kJ</b></div></div>
-     <p style="font-size:14px">Die Fahrt ist in deinem Konto gespeichert, Claude sieht sie beim nächsten Check. Für Strava: Datei sichern, in der Dateien-App einmal antippen (entpackt sie), dann auf strava.com unter „Hochladen“ die .tcx-Datei wählen.</p>
-     <div class="erg-acts"><button class="btn dark" data-erg="tcx">Datei für Strava sichern</button></div><p class="erg-msg" id="ergMsg">${esc(E.msg)}</p></div>`;
+     ${PDB?`<p style="font-size:14px">Die Fahrt ist in deiner App gespeichert. Bei der Einheit erscheint „Auswerten“, damit kommt sie direkt zu Claude, auch ohne Strava.</p>`:`<p style="font-size:14px"><b>So kommt die Fahrt zu Claude:</b> Tippe auf „Für die Coach-App kopieren“. Dann öffnest du die Coach-App, tippst bei der Einheit auf „Rollen-Fahrt einfügen“ und fügst sie ein.</p>`}
+     <div class="erg-acts">${PDB?"":`<button class="btn dark" data-erg="copy">Für die Coach-App kopieren</button>`}<button class="btn" data-erg="tcx">Datei für Strava sichern</button></div><p class="erg-msg" id="ergMsg">${esc(E.msg)}</p></div>`;
     if(!E.confetti){E.confetti=1;ergConfetti()}return}
   const tg=ergTarget(),z=zoneOf(tg);
   root.innerHTML=`<div class="erg${E.run?"":" paused"}" id="ergWrap" role="dialog" aria-modal="true" aria-label="Rolle steuern" style="--zc:${z[2]}"><div class="erg-fire" aria-hidden="true">${ergFireSvg()}</div>
@@ -2111,7 +2147,7 @@ function ergRender(){
      ${E.mode&&!E.sim?"":`<button class="btn dark" data-erg="connect"${bt?"":" disabled"}>Rolle verbinden</button>${bt?`<button class="btn" data-erg="connectall">Alle Geräte zeigen</button>`:""}`}
      <span class="st ${E.hrDev?"on":""}"><i></i>${E.hrDev?"Pulsgurt verbunden":"Pulsgurt nicht verbunden"}</span>${E.hrDev||!bt?"":`<button class="btn" data-erg="hr">Pulsgurt verbinden</button>`}
      ${E.mode?"":`<button class="btn" data-erg="sim">Ohne Rolle testen</button>`}
-     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 30</small>
+     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 31</small>
    </div>
    ${E.sim?`<p class="erg-msg sim">Testmodus: Watt und Trittfrequenz sind nur simuliert, die Rolle ist nicht verbunden. Mit „Rolle verbinden“ wechselst du zur echten Rolle.</p>`:""}
    ${bt?"":`<p class="erg-msg">Dieser Browser kann kein Bluetooth. Auf dem iPad öffne die App in „Bluefy“ (kostenlos im App Store), am Laptop in Chrome. Mit „Ohne Rolle testen“ kannst du dir den Ablauf trotzdem ansehen.</p>`}
@@ -2221,8 +2257,9 @@ async function ergFinish(){
   if(E.samples.length<30){ERG=null;ergRender();roar("Zu kurz zum Speichern.");return}
   E.phase="done";E.id="ride"+Date.now().toString(36);E.start=E.samples[0].ts;
   const S=ergSummary(),pts=[];for(let i=0;i<E.samples.length;i+=10){const ch=E.samples.slice(i,i+10);pts.push([ch[0].s,Math.round(ch.reduce((a,x)=>a+x.p,0)/ch.length),Math.round(ch.reduce((a,x)=>a+x.c,0)/ch.length),Math.round(ch.reduce((a,x)=>a+x.h,0)/ch.length)])}
-  try{if(!PDB){const L=JSON.parse(localStorage.getItem("kp_rides")||"[]");L.push({id:E.id,date:E.date,unit:E.unit,...S});localStorage.setItem("kp_rides",JSON.stringify(L.slice(-100)))}}catch(e){}
-  try{if(PDB)await PDB.collection("rides").doc(E.id).set({id:E.id,date:E.date,unit:E.unit,start:new Date(E.start).toISOString(),sim:E.sim,...S,planned:E.steps,pts10:pts})}catch(e){}
+  const rec={id:E.id,date:E.date,unit:E.unit,start:new Date(E.start).toISOString(),sim:!!E.sim,...S,planned:E.steps,pts10:pts};E.rec=rec;
+  try{if(!PDB){const L=JSON.parse(localStorage.getItem("kp_rides")||"[]");L.push(rec);localStorage.setItem("kp_rides",JSON.stringify(L.slice(-30)))}}catch(e){}
+  try{if(PDB)await PDB.collection("rides").doc(E.id).set(rec)}catch(e){}
   ergRender();
 }
 function ergTcx(){const E=ERG,iso=t=>new Date(t).toISOString().replace(/\.\d+Z$/,"Z"),S=ergSummary();
@@ -2251,6 +2288,7 @@ document.getElementById("ergRoot").addEventListener("click",ev=>{const b=ev.targ
   else if(a==="skip"){const x=ergStepAt(E.t);if(x)E.t+=x.left+.01;ergTick(true)}
   else if(a==="finish")ergFinish();
   else if(a==="tcx")ergSaveTcx();
+  else if(a==="copy"&&E.rec)copyRide(E.rec);
   else if(a==="close"){if((E.run||E.t>0)&&E.phase!=="done"){if(!confirm("Fahrt beenden? Sie wird gespeichert."))return;ergFinish();return}
     try{E.dev&&E.dev.gatt&&E.dev.gatt.connected&&E.dev.gatt.disconnect()}catch(e){}clearInterval(E.iv);ERG=null;ergRender()}
 });
@@ -2359,8 +2397,9 @@ function vRolle(){const t=isoDay(new Date());const items=[];
   const free=items.filter(x=>!x.d.date),dated=items.filter(x=>x.d.date),up=dated.filter(x=>x.d.date>=t),past=dated.filter(x=>x.d.date<t).reverse();
   const mins=u=>Math.round((u.erg||[]).reduce((a,s)=>a+(+s.d||0),0)/60);
   const row=x=>`<div class="pu${x.d.date===t?" rl-today":""}"><div class="pu-row"><div class="pu-h"><span class="spdot" style="background:var(--s-bike)"></span><b>${esc(x.u.title)}</b></div></div><p class="muted" style="font-size:13px">${x.d.date?(x.d.date===t?"Heute · ":"")+esc(x.d.d||"")+" "+fmtDate(x.d.date):"Watt selbst wählen"}${mins(x.u)?" · "+mins(x.u)+" min":""}</p><button class="ergbtn" data-ergopen="${x.ref}">${x.u.erg&&x.u.erg.length?"Auf der Rolle fahren":"Rolle frei steuern"}</button></div>`;
-  return `<div class="card">${dd("bike","corner b")}<h3>Rolle</h3><p class="muted" style="font-size:14px;margin-top:4px">In Bluefy öffnen, Kickr und Pulsgurt im Radraum verbinden. Nach der Fahrt die Datei für Strava sichern.</p>
+  return `<div class="card">${dd("bike","corner b")}<h3>Rolle</h3><p class="muted" style="font-size:14px;margin-top:4px">In Bluefy öffnen, Kickr und Pulsgurt im Radraum verbinden. Nach der Fahrt „Für die Coach-App kopieren“ tippen und in der Coach-App bei der Einheit einfügen.</p>
     <div style="margin-top:10px">${up.map(row).join("")||'<p class="muted">Keine geplanten Rolleneinheiten.</p>'}${free.map(row).join("")}</div></div>
+    ${savedRidesCard()}
     ${past.length?`<details class="card"><summary><b>Frühere Einheiten</b></summary><div style="margin-top:8px">${past.slice(0,8).map(row).join("")}</div></details>`:""}
     <p class="muted" style="font-size:12px;text-align:center;margin:10px 0 30px">Stand ${esc(PLAN&&PLAN.updated||"")}</p>`}
 function render(){
@@ -2388,6 +2427,8 @@ document.getElementById("app").addEventListener("click",ev=>{
   if(t.dataset.rev!==undefined&&PLAN){sendReview(t.dataset.rev,t);return}
   if(t.dataset.pv){PLANVIEW=t.dataset.pv;render();window.scrollTo(0,0);return}
   if(t.dataset.xadd){openExtra(t.dataset.xadd);return}
+  if(t.dataset.ridepaste){openRidePaste(t.dataset.ridepaste);return}
+  if(t.dataset.ridecopy!==undefined){try{const L=JSON.parse(localStorage.getItem("kp_rides")||"[]");const r=L[+t.dataset.ridecopy];if(r)copyRide(r)}catch(e){}return}
   if(t.dataset.xdel){delExtra(t.dataset.xdel);return}
   if(t.dataset.ergopen&&PLAN){openErg(t.dataset.ergopen);return}
   if(t.dataset.tick&&PLAN){const [r,st]=t.dataset.tick.split("|");setTick(r,st);return}
