@@ -1695,7 +1695,7 @@ let RIDES={};
 function initRides(){try{if(PDB)PDB.collection("rides").orderBy("start","desc").limit(40).onSnapshot(s=>{RIDES={};s.docs.forEach(d=>{RIDES[d.id]=d.data()});planRender()},()=>{})}catch(e){}}
 function rideFor(date,unit){return Object.values(RIDES).filter(r=>r.date===date&&r.unit===unit&&!r.sim).sort((a,b)=>(b.start||"").localeCompare(a.start||""))[0]}
 function rideCode(rec){return"KPRIDE1:"+btoa(unescape(encodeURIComponent(JSON.stringify(rec))))}
-function parseRide(txt){const m=String(txt||"").match(/KPRIDE1:([A-Za-z0-9+\/=]+)/);if(!m)return null;try{return JSON.parse(decodeURIComponent(escape(atob(m[1]))))}catch(e){return null}}
+function parseRide(txt){const t=String(txt||"").replace(/[\s​­]+/g,"");const m=t.match(/KPRIDE1:?([A-Za-z0-9+\/=_-]+)/i);if(!m)return null;let b=m[1].replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";try{return JSON.parse(decodeURIComponent(escape(atob(b))))}catch(e){try{return JSON.parse(atob(b))}catch(e2){return null}}}
 function rideVals(r){return`${Math.round((r.secs||0)/60)} min · Ø ${r.avgW||"–"} W${r.np?" · NP "+r.np:""}${r.avgHr?" · Ø HF "+r.avgHr:""}${r.avgCad?" · Kadenz "+r.avgCad:""}`}
 async function shareRide(rec){const code=rideCode(rec);try{await navigator.share({text:code});return true}catch(e){return e&&e.name==="AbortError"}}
 async function copyRide(rec){const code=rideCode(rec);
@@ -1718,7 +1718,7 @@ function openRidePaste(ref){
   const f=document.getElementById("rideForm");f.onsubmit=async ev=>{ev.preventDefault();const raw=document.getElementById("rideIn").value.trim(),h=document.getElementById("rideHint");
     const num=id=>{const v=parseInt(document.getElementById(id).value,10);return v>0?v:0};
     let r=raw?parseRide(raw):null;
-    if(!r&&raw){h.textContent="Das sieht nicht nach einer kopierten Fahrt aus. Lass das Feld leer und tipp die Werte unten ab.";return}
+    if(!r&&raw){h.textContent=`Das sieht nicht nach einer kopierten Fahrt aus. Eingefügt wurde: „${raw.slice(0,40)}${raw.length>40?"…":""}“ (${raw.length} Zeichen). Lass das Feld leer und tipp die Werte unten ab.`;return}
     if(!r){if(!num("rmMin")||!num("rmW")){h.textContent="Bitte mindestens Dauer und Ø Watt eintragen.";return}
       r={secs:num("rmMin")*60,avgW:num("rmW"),np:num("rmNp")||null,avgHr:num("rmHr")||null,avgCad:num("rmCad")||null,manual:true,start:d.date+"T12:00:00.000Z"}}
     const rec={...r,id:r.id||("ride"+Date.now().toString(36)),date:d.date,unit:u.title,origUnit:r.unit||"",origDate:r.date||"",via:"rollen-seite",sim:!!r.sim};
@@ -2157,7 +2157,7 @@ function ergRender(){
      ${E.mode&&!E.sim?"":`<button class="btn dark" data-erg="connect"${bt?"":" disabled"}>Rolle verbinden</button>${bt?`<button class="btn" data-erg="connectall">Alle Geräte zeigen</button>`:""}`}
      <span class="st ${E.hrDev?"on":""}"><i></i>${E.hrDev?"Pulsgurt verbunden":"Pulsgurt nicht verbunden"}</span>${E.hrDev||!bt?"":`<button class="btn" data-erg="hr">Pulsgurt verbinden</button>`}
      ${E.mode?"":`<button class="btn" data-erg="sim">Ohne Rolle testen</button>`}
-     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 32</small>
+     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 33</small>
    </div>
    ${E.sim?`<p class="erg-msg sim">Testmodus: Watt und Trittfrequenz sind nur simuliert, die Rolle ist nicht verbunden. Mit „Rolle verbinden“ wechselst du zur echten Rolle.</p>`:""}
    ${bt?"":`<p class="erg-msg">Dieser Browser kann kein Bluetooth. Auf dem iPad öffne die App in „Bluefy“ (kostenlos im App Store), am Laptop in Chrome. Mit „Ohne Rolle testen“ kannst du dir den Ablauf trotzdem ansehen.</p>`}
