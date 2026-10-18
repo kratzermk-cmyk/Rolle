@@ -407,6 +407,7 @@ ul.plain{margin:8px 0 0;padding-left:20px;display:grid;gap:6px}
 .planseg button{font:inherit;font-weight:800;font-size:14px;padding:8px 6px;border:0;background:none;color:var(--ink);cursor:pointer}
 .planseg button[aria-selected="true"]{background:var(--ink);color:var(--paper,#fff)}
 .todaycard{border-width:3px}
+.ridegrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .addrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .xtag{background:var(--surface)}
 .rtalk{margin-top:8px;border-top:1.5px dashed var(--ink);padding-top:6px}
@@ -1695,10 +1696,13 @@ function initRides(){try{if(PDB)PDB.collection("rides").orderBy("start","desc").
 function rideFor(date,unit){return Object.values(RIDES).filter(r=>r.date===date&&r.unit===unit&&!r.sim).sort((a,b)=>(b.start||"").localeCompare(a.start||""))[0]}
 function rideCode(rec){return"KPRIDE1:"+btoa(unescape(encodeURIComponent(JSON.stringify(rec))))}
 function parseRide(txt){const m=String(txt||"").match(/KPRIDE1:([A-Za-z0-9+\/=]+)/);if(!m)return null;try{return JSON.parse(decodeURIComponent(escape(atob(m[1]))))}catch(e){return null}}
+function rideVals(r){return`${Math.round((r.secs||0)/60)} min · Ø ${r.avgW||"–"} W${r.np?" · NP "+r.np:""}${r.avgHr?" · Ø HF "+r.avgHr:""}${r.avgCad?" · Kadenz "+r.avgCad:""}`}
+async function shareRide(rec){const code=rideCode(rec);try{await navigator.share({text:code});return true}catch(e){return e&&e.name==="AbortError"}}
 async function copyRide(rec){const code=rideCode(rec);
   try{await navigator.clipboard.writeText(code);roar("Kopiert! Jetzt die Coach-App öffnen und bei der Einheit „Rollen-Fahrt einfügen“ tippen.");return}catch(e){}
-  const root=document.getElementById("sheetRoot");root.innerHTML=`<div class="scrim" data-close style="z-index:200"><div class="sheet" role="dialog" aria-modal="true" aria-label="Fahrt kopieren"><div class="grab"></div><div class="hd"><h2>Fahrt kopieren</h2><button class="x" data-close aria-label="Schließen">×</button></div><p style="font-size:14px">Automatisches Kopieren geht hier nicht. Tippe in das Feld, wähle „Alles auswählen“ und dann „Kopieren“.</p><textarea id="rideCodeTa" rows="6" readonly style="width:100%;font-size:12px">${esc(code)}</textarea></div></div>`;
-  const ta=document.getElementById("rideCodeTa");ta.focus();ta.select()}
+  if(navigator.share&&await shareRide(rec))return;
+  const root=document.getElementById("sheetRoot");root.innerHTML=`<div class="scrim" data-close style="z-index:200"><div class="sheet" role="dialog" aria-modal="true" aria-label="Fahrt kopieren"><div class="grab"></div><div class="hd"><h2>Fahrt kopieren</h2><button class="x" data-close aria-label="Schließen">×</button></div><p style="font-size:14px">Automatisches Kopieren geht hier nicht. Tippe lange in das Feld, wähle „Alles auswählen“ und dann „Kopieren“.</p><textarea id="rideCodeTa" rows="6" style="width:100%;font-size:12px">${esc(code)}</textarea><p style="font-size:14px;margin-top:10px"><b>Oder einfach abtippen:</b> ${esc(rideVals(rec))}. Diese Werte trägst du in der Coach-App bei „Rollen-Fahrt einfügen“ unten ein.</p></div></div>`;
+  const ta=document.getElementById("rideCodeTa");ta.focus();try{ta.setSelectionRange(0,code.length)}catch(e){ta.select()}}
 function rideLine(r){return`<p class="muted" style="font-size:12.5px;margin:4px 0 0">Rollen-Fahrt gespeichert: ${Math.round((r.secs||0)/60)} min · Ø ${r.avgW||"–"} W${r.avgHr?" · Ø HF "+r.avgHr:""}</p>`}
 function openRidePaste(ref){
   const {d,u}=unitAt(ref);if(!u)return;
@@ -1707,10 +1711,16 @@ function openRidePaste(ref){
     <div class="hd"><div><span class="label">${esc(d.d||"")} ${fmtDate(d.date)}</span><h2 style="margin-top:4px">Rollen-Fahrt einfügen</h2></div><button class="x" data-close aria-label="Schließen">×</button></div>
     <form class="fb" id="rideForm" data-ref="${ref}">
       <label class="f" for="rideIn">Fahrt von der Rollen-Seite<span class="hint">Auf der Rollen-Seite „Für die Coach-App kopieren“ tippen, dann hier lange ins Feld tippen und „Einsetzen“ wählen.</span><textarea id="rideIn" rows="4" placeholder="KPRIDE1:…" style="font-size:13px"></textarea></label>
+      <p class="label" style="margin-top:6px">Oder Werte abtippen</p>
+      <div class="ridegrid">${[["rmMin","Dauer (min)"],["rmW","Ø Watt"],["rmNp","NP (Watt)"],["rmHr","Ø Puls"],["rmCad","Ø Kadenz"]].map(([id,l])=>`<label class="f" for="${id}">${l}<input id="${id}" class="sel" type="number" inputmode="numeric" min="0" max="999"></label>`).join("")}</div>
       <button class="btn dark big" type="submit">Speichern</button><p class="hint" id="rideHint"></p>
     </form></div></div>`;
-  const f=document.getElementById("rideForm");f.onsubmit=async ev=>{ev.preventDefault();const r=parseRide(document.getElementById("rideIn").value),h=document.getElementById("rideHint");
-    if(!r){h.textContent="Das sieht nicht nach einer kopierten Fahrt aus. Bitte nochmal auf der Rollen-Seite kopieren.";return}
+  const f=document.getElementById("rideForm");f.onsubmit=async ev=>{ev.preventDefault();const raw=document.getElementById("rideIn").value.trim(),h=document.getElementById("rideHint");
+    const num=id=>{const v=parseInt(document.getElementById(id).value,10);return v>0?v:0};
+    let r=raw?parseRide(raw):null;
+    if(!r&&raw){h.textContent="Das sieht nicht nach einer kopierten Fahrt aus. Lass das Feld leer und tipp die Werte unten ab.";return}
+    if(!r){if(!num("rmMin")||!num("rmW")){h.textContent="Bitte mindestens Dauer und Ø Watt eintragen.";return}
+      r={secs:num("rmMin")*60,avgW:num("rmW"),np:num("rmNp")||null,avgHr:num("rmHr")||null,avgCad:num("rmCad")||null,manual:true,start:d.date+"T12:00:00.000Z"}}
     const rec={...r,id:r.id||("ride"+Date.now().toString(36)),date:d.date,unit:u.title,origUnit:r.unit||"",origDate:r.date||"",via:"rollen-seite",sim:!!r.sim};
     if(rec.sim){h.textContent="Das war eine Testfahrt ohne Rolle. Die speichere ich nicht.";return}
     try{if(!PDB)throw 0;await PDB.collection("rides").doc(rec.id).set(rec)}catch(e){h.textContent="Speichern hat nicht geklappt.";return}
@@ -1719,7 +1729,7 @@ function openRidePaste(ref){
 }
 function savedRidesCard(){let L=[];try{L=JSON.parse(localStorage.getItem("kp_rides")||"[]")}catch(e){}
   L=L.map((r,i)=>[r,i]).filter(([r])=>!r.sim).reverse().slice(0,8);if(!L.length)return"";
-  return`<div class="card"><h3>Gespeicherte Fahrten</h3><p class="muted" style="font-size:14px;margin-top:4px">Damit Claude eine Fahrt auswerten kann: kopieren und in der Coach-App bei der Einheit unter „Rollen-Fahrt einfügen“ einsetzen.</p>${L.map(([r,i])=>`<div class="pu"><div class="pu-row"><div class="pu-h"><span class="spdot" style="background:var(--s-bike)"></span><b>${esc(r.unit||"Fahrt")}</b></div></div><p class="muted" style="font-size:13px">${r.date?fmtDate(r.date):""} · ${Math.round((r.secs||0)/60)} min · Ø ${r.avgW||"–"} W${r.avgHr?" · Ø HF "+r.avgHr:""}</p><button class="ergbtn" data-ridecopy="${i}">Für die Coach-App kopieren</button></div>`).join("")}</div>`}
+  return`<div class="card"><h3>Gespeicherte Fahrten</h3><p class="muted" style="font-size:14px;margin-top:4px">Damit Claude eine Fahrt auswerten kann: kopieren und in der Coach-App bei der Einheit unter „Rollen-Fahrt einfügen“ einsetzen. Klappt das nicht, tippst du dort die fett gedruckten Werte ab.</p>${L.map(([r,i])=>`<div class="pu"><div class="pu-row"><div class="pu-h"><span class="spdot" style="background:var(--s-bike)"></span><b>${esc(r.unit||"Fahrt")}</b></div></div><p style="font-size:15px;margin:4px 0"><b>${r.date?fmtDate(r.date)+" · ":""}${esc(rideVals(r))}</b></p><div class="addrow"><button class="ergbtn" data-ridecopy="${i}">Kopieren</button>${navigator.share?`<button class="ergbtn" data-rideshare="${i}">Teilen …</button>`:""}</div></div>`).join("")}</div>`}
 /* ---------- Nachgetragene Einheiten (extras/<id>): was zusätzlich gemacht wurde ---------- */
 let EXT={};
 function initExtras(){try{if(PDB)PDB.collection("extras").orderBy("created","desc").limit(60).onSnapshot(s=>{EXT={};s.docs.forEach(d=>{EXT[d.id]=d.data()});planRender()},()=>{})}catch(e){}}
@@ -2137,7 +2147,7 @@ function ergRender(){
      <div class="erg-done">${dino("flex",120)}</div>
      <div class="erg-sum"><div><span class="label">Zeit</span><b>${mmss(S.secs)}</b></div><div><span class="label">Ø Watt</span><b>${S.avgW}</b></div><div><span class="label">NP</span><b>${S.np}</b></div><div><span class="label">Ø Kadenz</span><b>${S.avgCad||"–"}</b></div><div><span class="label">Ø Puls</span><b>${S.avgHr||"–"}</b></div><div><span class="label">Arbeit</span><b>${S.kj} kJ</b></div></div>
      ${PDB?`<p style="font-size:14px">Die Fahrt ist in deiner App gespeichert. Bei der Einheit erscheint „Auswerten“, damit kommt sie direkt zu Claude, auch ohne Strava.</p>`:`<p style="font-size:14px"><b>So kommt die Fahrt zu Claude:</b> Tippe auf „Für die Coach-App kopieren“. Dann öffnest du die Coach-App, tippst bei der Einheit auf „Rollen-Fahrt einfügen“ und fügst sie ein.</p>`}
-     <div class="erg-acts">${PDB?"":`<button class="btn dark" data-erg="copy">Für die Coach-App kopieren</button>`}<button class="btn" data-erg="tcx">Datei für Strava sichern</button></div><p class="erg-msg" id="ergMsg">${esc(E.msg)}</p></div>`;
+     <div class="erg-acts">${PDB?"":`<button class="btn dark" data-erg="copy">Für die Coach-App kopieren</button>${navigator.share?`<button class="btn" data-erg="share">Teilen …</button>`:""}`}<button class="btn" data-erg="tcx">Datei für Strava sichern</button></div><p class="erg-msg" id="ergMsg">${esc(E.msg)}</p></div>`;
     if(!E.confetti){E.confetti=1;ergConfetti()}return}
   const tg=ergTarget(),z=zoneOf(tg);
   root.innerHTML=`<div class="erg${E.run?"":" paused"}" id="ergWrap" role="dialog" aria-modal="true" aria-label="Rolle steuern" style="--zc:${z[2]}"><div class="erg-fire" aria-hidden="true">${ergFireSvg()}</div>
@@ -2147,7 +2157,7 @@ function ergRender(){
      ${E.mode&&!E.sim?"":`<button class="btn dark" data-erg="connect"${bt?"":" disabled"}>Rolle verbinden</button>${bt?`<button class="btn" data-erg="connectall">Alle Geräte zeigen</button>`:""}`}
      <span class="st ${E.hrDev?"on":""}"><i></i>${E.hrDev?"Pulsgurt verbunden":"Pulsgurt nicht verbunden"}</span>${E.hrDev||!bt?"":`<button class="btn" data-erg="hr">Pulsgurt verbinden</button>`}
      ${E.mode?"":`<button class="btn" data-erg="sim">Ohne Rolle testen</button>`}
-     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 31</small>
+     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 32</small>
    </div>
    ${E.sim?`<p class="erg-msg sim">Testmodus: Watt und Trittfrequenz sind nur simuliert, die Rolle ist nicht verbunden. Mit „Rolle verbinden“ wechselst du zur echten Rolle.</p>`:""}
    ${bt?"":`<p class="erg-msg">Dieser Browser kann kein Bluetooth. Auf dem iPad öffne die App in „Bluefy“ (kostenlos im App Store), am Laptop in Chrome. Mit „Ohne Rolle testen“ kannst du dir den Ablauf trotzdem ansehen.</p>`}
@@ -2289,6 +2299,7 @@ document.getElementById("ergRoot").addEventListener("click",ev=>{const b=ev.targ
   else if(a==="finish")ergFinish();
   else if(a==="tcx")ergSaveTcx();
   else if(a==="copy"&&E.rec)copyRide(E.rec);
+  else if(a==="share"&&E.rec)shareRide(E.rec);
   else if(a==="close"){if((E.run||E.t>0)&&E.phase!=="done"){if(!confirm("Fahrt beenden? Sie wird gespeichert."))return;ergFinish();return}
     try{E.dev&&E.dev.gatt&&E.dev.gatt.connected&&E.dev.gatt.disconnect()}catch(e){}clearInterval(E.iv);ERG=null;ergRender()}
 });
@@ -2428,6 +2439,7 @@ document.getElementById("app").addEventListener("click",ev=>{
   if(t.dataset.pv){PLANVIEW=t.dataset.pv;render();window.scrollTo(0,0);return}
   if(t.dataset.xadd){openExtra(t.dataset.xadd);return}
   if(t.dataset.ridepaste){openRidePaste(t.dataset.ridepaste);return}
+  if(t.dataset.rideshare!==undefined){try{const L=JSON.parse(localStorage.getItem("kp_rides")||"[]");const r=L[+t.dataset.rideshare];if(r)shareRide(r)}catch(e){}return}
   if(t.dataset.ridecopy!==undefined){try{const L=JSON.parse(localStorage.getItem("kp_rides")||"[]");const r=L[+t.dataset.ridecopy];if(r)copyRide(r)}catch(e){}return}
   if(t.dataset.xdel){delExtra(t.dataset.xdel);return}
   if(t.dataset.ergopen&&PLAN){openErg(t.dataset.ergopen);return}
