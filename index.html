@@ -580,8 +580,6 @@ ul.plain{margin:8px 0 0;padding-left:20px;display:grid;gap:6px}
 .erg-scene .v-bike .d-legs{animation-duration:var(--pd,.35s)}
 .erg-scene .v-bike .d-wheel{animation-duration:var(--wd,.7s)}
 .erg-scene .v-bike .d-all{animation-duration:var(--pd,.35s)}
-.erg-scene .sweat{position:absolute;left:calc(50% + 40px);bottom:96px;font-size:16px;opacity:0}
-.erg-scene.hard .sweat{animation:erg-sweat 1.2s ease-out infinite}
 @keyframes erg-sweat{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(18px,22px);opacity:0}}
 .erg.paused .erg-scene *,.erg.paused .erg-scene::after,.erg.paused .erg-scene .road::after{animation-play-state:paused!important}
 .erg-zone{position:absolute;top:8px;left:8px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--zc);color:#111;padding:3px 8px;transition:background .8s}
@@ -658,6 +656,70 @@ button,.btn,input,label{touch-action:manipulation}
 .erg.fire .erg-panel{background:rgba(20,20,20,.82)}
 .erg.paused .erg-fire *{animation-play-state:paused!important}
 @media (prefers-reduced-motion: reduce){.erg-fire *{animation:none!important}}
+/* Radraum groß: Dino als Hintergrund */
+.erg>.erg-scene{position:fixed;inset:0;height:auto;border:0;z-index:-1;pointer-events:none;background:linear-gradient(#18222e 0%,#24303b 55%,#2a2318 100%)}
+.erg>.erg-fire{z-index:-1!important}
+.erg-scene .sky{height:60%;background-size:320px 120px}
+.erg-scene .hills2{bottom:10vh;height:26vh;background:radial-gradient(ellipse 220px 150px at 220px 26vh,#28331f 98%,transparent 100%) 0 0/440px 26vh repeat-x}
+.erg-scene .hills{bottom:9vh;height:16vh;background:radial-gradient(ellipse 150px 100px at 150px 16vh,#344e2b 98%,transparent 100%) 0 0/300px 16vh repeat-x}
+.erg-scene .road{height:10vh;border-top-width:3px}
+.erg-scene .road::after{top:45%;height:6px;background-size:120px 6px;background-image:repeating-linear-gradient(90deg,#F4C430 0 60px,transparent 60px 120px)}
+@keyframes erg-dash{to{background-position-x:-120px}}
+.erg-dino{position:absolute;left:50%;bottom:3vh;width:min(130vw,95vh);translate:-64% 0;pointer-events:none}
+.erg-top{display:grid;gap:10px}
+.erg-dino .dino,.erg-scene .erg-dino .dino{position:static;width:100%;height:auto;transform:none;filter:drop-shadow(0 8px 0 rgba(0,0,0,.35))}
+.erg-dino.swap{animation:erg-poof .5s ease}
+@keyframes erg-poof{0%{scale:.94;filter:brightness(1.8)}100%{scale:1}}
+.dino .d-lean{transform-box:view-box;transform-origin:60px 86px;transition:transform .8s}
+.m-chill .d-lean{transform:rotate(-4deg)}
+.m-rocket .d-lean{transform:rotate(5deg) translateX(4px)}
+.m-chill .smk circle{fill:#d8d8d0;opacity:0;transform-box:fill-box;transform-origin:center;animation:d-smoke 2.6s ease-out infinite}
+.m-chill .smk circle:nth-child(2){animation-delay:.9s}.m-chill .smk circle:nth-child(3){animation-delay:1.7s}
+@keyframes d-smoke{0%{transform:translate(0,0) scale(.5);opacity:.85}100%{transform:translate(-8px,-26px) scale(2.4);opacity:0}}
+.m-chill .ember{animation:d-ember 1.6s ease-in-out infinite alternate}
+@keyframes d-ember{from{fill:#F07A1A}to{fill:#F4C430}}
+.m-chill .note{transform-box:fill-box;animation:d-zz 3s ease-in-out infinite}
+.m-focus .drop{transform-box:fill-box;animation:erg-sweat 1.4s ease-in infinite}
+.m-focus .tail{transform-box:fill-box;transform-origin:100% 50%;animation:d-band .3s ease-in-out infinite alternate}
+.m-rocket .rkflame{transform-box:fill-box;transform-origin:100% 50%;animation:rk-fl .09s linear infinite alternate}
+.m-rocket .spd{animation:d-whoosh .5s linear infinite}
+.m-rocket .pack{transform-box:view-box;transform-origin:50px 50px;animation:d-hop .18s ease-in-out infinite alternate}
+.erg.paused .erg-dino *{animation-play-state:paused!important}
+.erg-ctl,.erg-top{min-width:0}
+.erg:has(.erg-top){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto 1fr auto auto auto;gap:10px 12px}
+.erg-hud,.erg-dock{display:contents}
+.erg-top,.erg-prof,.erg-stage,.erg-ctl,.erg-hint{grid-column:1/-1}
+.erg-pw{grid-column:1}.erg-int{grid-column:2;align-self:stretch}
+.erg-prof{grid-row:3}.erg-stage{grid-row:4}
+.erg-prof .erg-trace,.erg-prof .erg-meta span:first-child{display:none}
+.erg-prof .erg-bar{height:46px}
+.erg>.erg-fire{height:26vh}
+@media (max-width:640px){.erg:has(.erg-top){grid-template-columns:1fr;grid-template-rows:none}.erg-pw,.erg-int{grid-column:1}.erg-prof,.erg-stage{grid-row:auto}.erg-stage{min-height:30vh}}
+.erg .erg-panel{background:rgba(16,16,16,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.erg-pw{display:flex;gap:12px;align-items:center}
+.erg-pw .erg-ring{flex:0 0 auto;width:min(46vw,230px)}
+.erg-pw .erg-ring svg{width:100%}
+.erg-pw .erg-ring .mid b{font-size:clamp(48px,9vw,72px)}
+.erg-pw .erg-ring .mid .tg{font-size:15px}
+.erg-pw .erg-mini{flex:1;grid-template-columns:1fr 1fr;margin-top:0;gap:12px 8px}
+.erg-pw .erg-mini b{font-size:34px}
+.erg-stage{min-height:22vh}
+.erg-ctl{display:grid;gap:10px}
+@media (min-width:900px) and (orientation:landscape){
+ .erg:has(.erg-top){display:grid;grid-template-columns:minmax(240px,22vw) minmax(0,1fr) minmax(290px,27vw);grid-template-rows:auto auto auto 1fr auto;gap:10px 16px}
+ .erg-hud,.erg-dock{display:contents}
+ .erg-top{grid-column:1/-1;grid-row:1}
+ .erg-pw{grid-column:1;grid-row:2/5;flex-direction:column;align-self:start}
+ .erg-pw .erg-ring{width:min(100%,230px)}
+ .erg-int{grid-column:3;grid-row:2;align-self:start}
+ .erg-ctl.c1{grid-column:3;grid-row:3}
+ .erg-ctl.c2{grid-column:3;grid-row:4;align-self:start}
+ .erg-stage{grid-column:2;grid-row:2/5}
+ .erg-prof{grid-column:1/-1;grid-row:5}
+ .erg-hint{display:none}
+ .erg-int .t{font-size:clamp(48px,6vw,72px)!important}
+ .erg-dino{width:min(95vw,125vh);translate:-69% 0;bottom:2vh}
+}
 /* Raketen */
 .rocket{position:fixed;left:0;top:0;width:86px;height:auto;pointer-events:none;z-index:30;will-change:transform}
 .rocket .rf{transform-box:fill-box;transform-origin:100% 50%;animation:rk-fl .09s linear infinite alternate}
@@ -1143,12 +1205,12 @@ const FOOT={
 };
 
 /* ---------- Dinos ---------- */
-function dino(v="",w=120){
+function dino(v="",w=120,m=""){
   const open=v==="fire";
   const body=`<path d="M8 66C20 64 30 56 40 52C46 40 56 36 66 38C70 30 74 22 84 20C96 18 108 22 110 30${open?"C111 33 108 35 100 35L94 36C100 38 107 40 109 44C101 49 90 50 84 48":"C110 36 104 38 96 38C92 42 86 44 82 46"}C80 54 78 62 72 68C64 74 50 76 42 72C30 72 18 70 8 66Z" fill="#BFE6A8" stroke="#111" stroke-width="3" stroke-linejoin="round"/>`;
   const spikes=`<path d="M40 50l3-8 5 5M51 43l3-9 5 7M62 38l3-8 5 6M73 30l5-6 3 7" fill="none" stroke="#F07A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
   const spots=`<circle cx="40" cy="62" r="3" fill="#7FC46A"/><circle cx="52" cy="58" r="2.5" fill="#7FC46A"/><circle cx="29" cy="64" r="2" fill="#7FC46A"/>`;
-  const eye=v==="sleep"?`<path d="M89 27q3 3 7 0" stroke="#111" stroke-width="2.2" fill="none" stroke-linecap="round"/>`:`<circle cx="92" cy="27" r="3.8" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="93.2" cy="27.6" r="1.7" fill="#111"/>`;
+  let eye=v==="sleep"?`<path d="M89 27q3 3 7 0" stroke="#111" stroke-width="2.2" fill="none" stroke-linecap="round"/>`:`<circle cx="92" cy="27" r="3.8" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="93.2" cy="27.6" r="1.7" fill="#111"/>`;
   const mouth=open?`<path d="M99 35l2 3 2-3M94 36.5l1.5 2.5 2-2.5" stroke="#111" fill="#fff" stroke-width="1.4" stroke-linejoin="round"/>`:`<path d="M110 31C104 33 99 34 95 32.5" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="97" cy="35" rx="3" ry="1.6" fill="#F7A6A0"/>`;
   let legs=`<path d="M48 72L46 88h10M66 70l1 18h9" fill="none" stroke="#111" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>`;
   let arm=`<path d="M80 52l7 4 3-2" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -1159,8 +1221,24 @@ function dino(v="",w=120){
   if(v==="bike"){pre="";post=`<circle cx="36" cy="86" r="12" fill="none" stroke="#111" stroke-width="2.8"/><circle cx="88" cy="86" r="12" fill="none" stroke="#111" stroke-width="2.8"/><g class="d-wheel" style="transform-origin:36px 86px"><path d="M27 86h18M36 77v18" stroke="#111" stroke-width="1.6"/></g><g class="d-wheel" style="transform-origin:88px 86px"><path d="M79 86h18M88 77v18" stroke="#111" stroke-width="1.6"/></g><path d="M36 86l16-14h22l14 14M52 72l8 14h-24M74 72l-2-8h8" stroke="#E2402B" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;legs=`<path d="M50 70l6 10M66 70l-2 14" fill="none" stroke="#111" stroke-width="3.6" stroke-linecap="round"/>`}
   if(v==="sleep"){post=`<text x="102" y="16" font-family="Caveat,cursive" font-weight="700" font-size="18" fill="#2F6BD8">z</text><text x="110" y="8" font-family="Caveat,cursive" font-weight="700" font-size="13" fill="#2F6BD8">z</text>`}
   if(v==="flex"){arm=`<path d="M80 52l5-8 4 2" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="47" r="3" fill="#BFE6A8" stroke="#111" stroke-width="2"/>`;post=`<path d="M106 8l2 6 6 1-5 4 2 6-5-3-5 3 2-6-5-4 6-1z" fill="#F4C430" stroke="#111" stroke-width="1.6"/>`}
+  if(v==="bike"&&m){vb="-46 -34 176 134";const sk=`stroke="#111" stroke-linecap="round" stroke-linejoin="round"`;
+    if(m==="chill"){// entspannt, raucht eine Mini-Rakete
+      eye=`<circle cx="92" cy="27" r="3.8" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="92.6" cy="28.6" r="1.6" fill="#111"/><path d="M87.8 27.4a4.2 4.2 0 0 1 8.4 0z" fill="#BFE6A8" ${sk} stroke-width="2"/>`;
+      post+=`<g class="cig"><path d="M107 32.5l13-3.2 1 4-13 3.2z" fill="#F3F1EA" ${sk} stroke-width="1.4"/><path d="M107 32.5l-3 2.2 4 1.8z" fill="#E2402B" ${sk} stroke-width="1.2"/><path d="M118 29.8l3-3 .6 3.6M119 33.8l3.6 1.4-2.4 1.6" fill="#E2402B" ${sk} stroke-width="1.2"/><circle cx="113" cy="32.4" r="1.1" fill="#2F6BD8"/><circle class="ember" cx="122.4" cy="31.6" r="1.8" fill="#F07A1A"/></g>
+        <g class="smk"><circle cx="124" cy="27" r="2.4"/><circle cx="125" cy="25" r="2.8"/><circle cx="123" cy="26" r="2"/></g>
+        <text class="note" x="64" y="10" font-size="11" font-weight="800" fill="#F3F1EA">♪</text>`}
+    if(m==="focus"){// Tempo: Stirnband, konzentriert
+      post+=`<path d="M86 21.5l8 2.2" ${sk} stroke-width="2.4"/><path d="M80 23q14-5 28 1" stroke="#E2402B" stroke-width="4.5" fill="none" stroke-linecap="round"/><path class="tail" d="M80 23l-9 2M80 23l-8-4" stroke="#E2402B" stroke-width="3" stroke-linecap="round"/><path class="drop" d="M102 14q3 4 0 6q-3-2 0-6" fill="#5BB8F0" stroke="#111" stroke-width="1"/>`}
+    if(m==="rocket"){// Intervall: Brille auf, Rakete auf den Rücken
+      pre=`<g class="spd"><path d="M-40 30h22M-44 46h28M-36 62h18M-42 78h26" stroke="#F3F1EA" stroke-width="2.4" stroke-linecap="round" opacity=".7"/></g>`;
+      post+=`<g class="pack"><g class="rkflame"><path d="M30 44q-22 -4 -40 8q18 10 40 4z" fill="#F07A1A" ${sk} stroke-width="2"/><path d="M30 46q-13 -1 -24 5q11 5 24 3z" fill="#F4C430"/><path d="M30 48q-6 0 -11 2q5 2 11 2z" fill="#fff"/></g>
+        <path d="M30 42l-6-9h9l6 7zM30 56l-6 8h9l6-7z" fill="#E2402B" ${sk} stroke-width="2.2"/>
+        <path d="M30 42h30q12 2 16 7q-4 5-16 7H30z" fill="#F3F1EA" ${sk} stroke-width="2.6"/><path d="M66 42.8q8 2 10 6.2q-2 4.2-10 6.2z" fill="#E2402B" ${sk} stroke-width="2"/><circle cx="56" cy="49" r="3.4" fill="#2F6BD8" stroke="#111" stroke-width="2"/>
+        <path d="M40 41q3 12 4 22M52 40q2 12 2 24" stroke="#4a3528" stroke-width="3.6" fill="none" stroke-linecap="round"/></g>
+        <path d="M81 25q12-4 28-1" stroke="#111" stroke-width="3.2" fill="none" stroke-linecap="round"/><rect x="85.5" y="21.5" width="14" height="11" rx="4" fill="#2F6BD8" fill-opacity=".9" stroke="#111" stroke-width="2.4"/><path d="M88 24.5l3-1.4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>`}
+  }
   if(open){vb="0 0 170 100";post+=`<g class="flame"><path d="M108 40C122 28 132 36 144 26C140 36 154 36 164 30C158 44 144 46 156 56C140 56 126 50 108 44Z" fill="#F07A1A" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></g><g class="flame f2"><path d="M110 41C120 36 128 40 136 35C134 41 144 42 148 40C142 47 130 46 110 43Z" fill="#F4C430"/></g><g class="flame"><path d="M111 41.5C118 40 123 41 128 40C124 43 118 43 111 42.5Z" fill="#E2402B"/></g>`}
-  return `<svg class="dino v-${v||"std"}" viewBox="${vb}" aria-hidden="true"><g class="d-pre">${pre}</g><g class="d-all"><g class="d-legs">${legs}</g><g class="d-bod">${body}${spikes}${spots}<g class="d-arm">${arm}</g><g class="d-eye">${eye}</g>${mouth}<circle cx="106" cy="26.5" r="1.1" fill="#111"/></g></g><g class="d-post">${post}</g></svg>`;
+  return `<svg class="dino v-${v||"std"}${m?" m-"+m:""}" viewBox="${vb}" aria-hidden="true"><g class="d-lean"><g class="d-pre">${pre}</g><g class="d-all"><g class="d-legs">${legs}</g><g class="d-bod">${body}${spikes}${spots}<g class="d-arm">${arm}</g><g class="d-eye">${eye}</g>${mouth}<circle cx="106" cy="26.5" r="1.1" fill="#111"/></g></g><g class="d-post">${post}</g></g></svg>`;
 }
 document.addEventListener("click",ev=>{const d=ev.target.closest&&ev.target.closest(".dino");if(!d||d.closest(".roar"))return;d.classList.remove("jump");void d.getBoundingClientRect();d.classList.add("jump");setTimeout(()=>d.classList.remove("jump"),650)});
 const CHEERS=["ROAAAR!","Dino-Power!","Stark!","Feuer frei!","Rawr, sauber!","Ausgestorben? Nicht du!"];
@@ -2179,44 +2257,53 @@ function ergRender(){
      <div class="erg-acts">${PDB?"":`<button class="btn dark" data-erg="copy">Für die Coach-App kopieren</button>${navigator.share?`<button class="btn" data-erg="share">Teilen …</button>`:""}`}<button class="btn" data-erg="tcx">Datei für Strava sichern</button></div><p class="erg-msg" id="ergMsg">${esc(E.msg)}</p></div>`;
     if(!E.confetti){E.confetti=1;ergConfetti()}return}
   const tg=ergTarget(),z=zoneOf(tg);
-  root.innerHTML=`<div class="erg${E.run?"":" paused"}" id="ergWrap" role="dialog" aria-modal="true" aria-label="Rolle steuern" style="--zc:${z[2]}"><div class="erg-fire" aria-hidden="true">${ergFireSvg()}</div>
+  const mood=ergMood(z);E.mood=mood;
+  root.innerHTML=`<div class="erg${E.run?"":" paused"}" id="ergWrap" role="dialog" aria-modal="true" aria-label="Rolle steuern" style="--zc:${z[2]}">
+   <div class="erg-scene" id="ergScene" aria-hidden="true"><div class="sky"></div><div class="hills2"></div><div class="hills"></div><div class="road"></div><div class="erg-dino" id="ergDino">${dino("bike",120,mood)}</div></div>
+   <div class="erg-fire" aria-hidden="true">${ergFireSvg()}</div>
+   <div class="erg-top">
    <div class="erg-h"><h2>${esc(E.unit)}<small id="ergZoneT">${z[1]}</small></h2><button class="btn" data-erg="close">${E.run||E.t>0?"Beenden":"Schließen"}</button></div>
    <div class="erg-dev">
      <span class="st ${E.sim?"sim":E.mode==="ftms"||E.mode==="wahoo"?"on":E.link||E.mode==="power"?"half":""}"><i></i>${E.sim?"Testmodus ohne Rolle":E.mode==="ftms"||E.mode==="wahoo"?"Rolle verbunden"+(E.dev&&E.dev.name?" ("+esc(E.dev.name)+")":""):E.mode==="power"?"Rolle verbunden, nur Watt":E.link?"Rolle verbunden, richte ein …":"Rolle nicht verbunden"}</span>
      ${E.mode&&!E.sim?"":`<button class="btn dark" data-erg="connect"${bt?"":" disabled"}>Rolle verbinden</button>${bt?`<button class="btn" data-erg="connectall">Alle Geräte zeigen</button>`:""}`}
      <span class="st ${E.hrDev?"on":""}"><i></i>${E.hrDev?"Pulsgurt verbunden":"Pulsgurt nicht verbunden"}</span>${E.hrDev||!bt?"":`<button class="btn" data-erg="hr">Pulsgurt verbinden</button>`}
      ${E.mode?"":`<button class="btn" data-erg="sim">Ohne Rolle testen</button>`}
-     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 36</small>
+     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 37</small>
    </div>
    ${E.sim?`<p class="erg-msg sim">Testmodus: Watt und Trittfrequenz sind nur simuliert, die Rolle ist nicht verbunden. Mit „Rolle verbinden“ wechselst du zur echten Rolle.</p>`:""}
    ${bt?"":`<p class="erg-msg">Dieser Browser kann kein Bluetooth. Auf dem iPad öffne die App in „Bluefy“ (kostenlos im App Store), am Laptop in Chrome. Mit „Ohne Rolle testen“ kannst du dir den Ablauf trotzdem ansehen.</p>`}
    <p class="erg-msg${/^Schritt [1-4]\/4/.test(E.msg)?" ok":""}" id="ergMsg">${esc(E.msg)}</p>
-   <div class="erg-main">
-    <div class="erg-panel">
+   </div>
+   <div class="erg-hud">
+    <div class="erg-panel erg-pw">
      <div class="erg-ring">${ergRingSvg()}
       <div class="mid"><span>Watt</span><b id="ergPw">–</b><span class="tg" id="ergTgt">Ziel ${tg} W</span><span class="dv" id="ergDv"></span></div></div>
-     <div class="erg-zlg">${ZONES.map(z=>`<span><i style="background:${z[2]}"></i>${z[1]}</span>`).join("")}</div>
      <div class="erg-mini"><div><b id="ergCad">–</b><span>U/min</span></div><div class="hr" id="ergHrBox"><b id="ergHr">–</b><span>Puls</span></div><div><b id="ergKm">0,0</b><span>km</span></div><div><b id="ergKj">0</b><span>kJ</span></div></div>
     </div>
-    <div style="display:grid;gap:12px;align-content:start">
-     <div class="erg-scene" id="ergScene"><div class="sky"></div><div class="hills2"></div><div class="hills"></div><div class="road"></div>${dino("bike",120)}<span class="sweat">💧</span><span class="erg-zone" id="ergZone">${z[1]}</span></div>
-     ${E.free?`<div class="erg-panel erg-int"><div class="row"><span class="nm">Freie Fahrt im ERG-Modus</span><span class="t" id="ergEl">${mmss(E.t)}</span></div></div>`:
+    ${E.free?`<div class="erg-panel erg-int"><div class="row"><span class="nm">Freie Fahrt im ERG-Modus</span><span class="t" id="ergEl">${mmss(E.t)}</span></div></div>`:
      `<div class="erg-panel erg-int"><div class="row"><span class="nm" id="ergStepT">–</span><span class="t" id="ergLeft">–</span></div><div class="pb"><i id="ergPb"></i></div><p class="nx" id="ergNext"></p></div>`}
-    </div>
    </div>
-   ${E.free?"":`<div class="erg-panel">${ergBarHtml()}<svg class="erg-trace" id="ergTrace" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true"><polyline class="tl" id="ergTl" fill="none" stroke-width="2" points=""/><polyline class="pl" id="ergPl" fill="none" stroke-width="2.5" stroke-linejoin="round" points=""/></svg><div class="erg-meta"><span>letzte 3 min: Watt und Ziel</span><span id="ergEl">${mmss(E.t)} / ${mmss(E.total)}</span></div></div>`}
+   <div class="erg-stage"></div>
+   <div class="erg-dock">
+   ${E.free?"":`<div class="erg-panel erg-prof">${ergBarHtml()}<svg class="erg-trace" id="ergTrace" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true"><polyline class="tl" id="ergTl" fill="none" stroke-width="2" points=""/><polyline class="pl" id="ergPl" fill="none" stroke-width="2.5" stroke-linejoin="round" points=""/></svg><div class="erg-meta"><span>letzte 3 min: Watt und Ziel</span><span id="ergEl">${mmss(E.t)} / ${mmss(E.total)}</span></div></div>`}
+   <div class="erg-ctl c1">
    <div class="erg-panel erg-adj"><div class="lb"><span>${E.free?"Watt":"Intensität"}</span><b class="off" id="ergOff">${ergAdjTxt()}</b></div>
     <div class="sl"><button class="btn" data-erg="minus" aria-label="5 Watt weniger">−5</button><input type="range" class="erg-sl" id="ergSl" step="5" ${E.free?`min="50" max="450" value="${E.manualW}"`:`min="-100" max="100" value="${E.off}"`} aria-label="${E.free?"Watt":"Intensität"}" style="--p:${ergAdjPct()}%"><button class="btn" data-erg="plus" aria-label="5 Watt mehr">+5</button></div>
     ${E.free?"":`<div><button class="btn" data-erg="skip">Abschnitt überspringen</button></div>`}</div>
+   </div>
+   <div class="erg-ctl c2">
    ${E.sim?"":`<div class="erg-auto"><button class="btn${AUTOP?" on":""}" data-erg="auto" aria-pressed="${AUTOP}">Auto-Start/Stopp ${AUTOP?"an":"aus"}</button><span>${AUTOP?(E.autoP?"Pausiert, weiter sobald du trittst.":E.manualP&&E.t>0?"Von Hand pausiert, weiter mit „Weiter“.":E.t>0?"Pausiert nach 4 s ohne Treten.":"Startet, sobald du trittst."):"Start und Pause nur per Knopf."}</span></div>`}
    <div class="erg-acts"><button class="btn dark big" data-erg="go"${E.mode?"":" disabled"}>${E.run?"Pause":E.t>0?"Weiter":"Start"}</button>${E.t>0?`<button class="btn" data-erg="finish">Fahrt beenden &amp; speichern</button>`:""}</div>
-   <p class="muted" style="font-size:13px">Die Rolle hält die Zielwattzahl im ERG-Modus, egal welcher Gang. Am besten mittleres Kettenblatt und mittleres Ritzel, Trittfrequenz 85–95. Der Bildschirm bleibt an, solange die Fahrt läuft.</p>
+   </div>
+   </div>
+   <p class="muted erg-hint" style="font-size:13px">Die Rolle hält die Zielwattzahl im ERG-Modus, egal welcher Gang. Am besten mittleres Kettenblatt und mittleres Ritzel, Trittfrequenz 85–95. Der Bildschirm bleibt an, solange die Fahrt läuft.</p>
   <div class="erg-banner" id="ergBanner"><b></b><span></span></div></div>`;
   E.lastStep=null;E.lastZone=null;if(E.mode&&!E.iv)E.iv=setInterval(()=>ergTick(false),1000);ergTick(true);
 }
 const RING={r:112,len:527.8,max:340};
 const ringAng=w=>135+Math.min(1,Math.max(0,w/RING.max))*270;
 function ringPt(a,r){const t=a*Math.PI/180;return[(130+r*Math.cos(t)).toFixed(1),(130+r*Math.sin(t)).toFixed(1)]}
+function ergMood(z){const i=ZONES.indexOf(z);return i<=1?"chill":i<=3?"focus":"rocket"}
 function ergRingSvg(){
   let lo=0,segs="";ZONES.forEach((z,i)=>{const hi=Math.min(RING.max,z[0]*ERG_FTP),a=lo/RING.max*RING.len,b=hi/RING.max*RING.len;
     if(b>a)segs+=`<circle class="zs" data-z="${i}" cx="130" cy="130" r="${RING.r}" fill="none" stroke="${z[2]}" stroke-width="18" stroke-dasharray="${(b-a-1.5).toFixed(1)} 800" stroke-dashoffset="${(-a).toFixed(1)}" transform="rotate(135 130 130)"/>`;lo=hi});
@@ -2247,7 +2334,8 @@ function ergTick(paintOnly){
   const set=(id,v)=>{const el=document.getElementById(id);if(el&&el.textContent!==String(v))el.textContent=v};
   const wrap=document.getElementById("ergWrap");if(!wrap)return;
   // Zone & Farben
-  if(E.lastZone!==z[1]){wrap.style.setProperty("--zc",z[2]);set("ergZone",z[1]);set("ergZoneT",z[1]);E.lastZone=z[1]}
+  if(E.lastZone!==z[1]){wrap.style.setProperty("--zc",z[2]);set("ergZoneT",z[1]);E.lastZone=z[1]}
+  const md=ergMood(z),dn=document.getElementById("ergDino");if(dn&&E.mood!==md){E.mood=md;dn.innerHTML=dino("bike",120,md);dn.classList.remove("swap");void dn.offsetWidth;dn.classList.add("swap")}
   const tgEl=document.getElementById("ergTgt");if(tgEl&&tgEl.textContent!==`Ziel ${tg} W`){tgEl.textContent=`Ziel ${tg} W`;tgEl.classList.remove("bump");void tgEl.offsetWidth;tgEl.classList.add("bump")}
   // Leistung & Ring
   const l3=E.samples.slice(-3),pw=E.mode?(l3.length&&E.run?Math.round(l3.reduce((a,x)=>a+x.p,0)/l3.length):E.pw):null;
