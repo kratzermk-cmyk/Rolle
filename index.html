@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Kraftplan Rolle</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -607,9 +607,20 @@ ul.plain{margin:8px 0 0;padding-left:20px;display:grid;gap:6px}
 .erg-trace .tl{stroke:#F3F1EA;stroke-dasharray:4 4;opacity:.6}
 .erg-trace .pl{stroke:var(--zc);transition:stroke .8s}
 .erg-meta{display:flex;justify-content:space-between;font-size:13px;color:#A8A8A0;margin-top:4px;font-family:var(--f-mono)}
-.erg-adj{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
-.erg-adj .btn{padding:8px 14px;font-size:16px}
-.erg-adj .off{font-family:var(--f-mono);min-width:56px;text-align:center}
+button,.btn,input,label{touch-action:manipulation}
+.erg,.erg *{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.erg-adj{display:grid;gap:8px;font-size:14px}
+.erg-adj .lb{display:flex;justify-content:space-between;align-items:baseline}
+.erg-adj .off{font-family:var(--f-mono);font-size:26px;font-weight:800;color:#F3F1EA}
+.erg-adj .sl{display:flex;gap:10px;align-items:center}
+.erg-adj .btn{padding:10px 16px;font-size:18px;min-width:56px}
+.erg-sl{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:48px;margin:0;background:transparent;touch-action:pan-y}
+.erg-sl::-webkit-slider-runnable-track{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--zc) var(--p,50%),#3a3a3a var(--p,50%))}
+.erg-sl::-moz-range-track{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--zc) var(--p,50%),#3a3a3a var(--p,50%))}
+.erg-sl::-webkit-slider-thumb{-webkit-appearance:none;width:40px;height:40px;margin-top:-14px;border-radius:50%;background:#F3F1EA;border:3px solid #111;box-shadow:0 0 0 3px var(--zc)}
+.erg-sl::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#F3F1EA;border:3px solid #111;box-shadow:0 0 0 3px var(--zc)}
+.erg-auto{display:flex;align-items:center;gap:10px;font-size:14px;color:#A8A8A0}
+.erg-auto .btn.on{background:#3FBF66;color:#111;border-color:#3FBF66}
 .erg-acts{display:flex;gap:8px;flex-wrap:wrap}
 .erg-acts .btn{flex:1;min-width:120px;padding:14px 10px;font-size:15px}
 .erg-banner{position:fixed;left:50%;top:18%;transform:translate(-50%,-20px) scale(.9);opacity:0;pointer-events:none;z-index:45;background:var(--zc);color:#111;border:3px solid #111;box-shadow:6px 6px 0 #111;padding:14px 22px;text-align:center;transition:opacity .3s,transform .3s}
@@ -2126,7 +2137,7 @@ async function ergHrChar(c){c.addEventListener("characteristicvaluechanged",e=>{
 async function ergWrite(bytes){const E=ERG,c=E.mode==="wahoo"||(!E.cp&&E.wahoo)?E.wahoo:E.cp;if(!c)return;const b=new Uint8Array(bytes);
   if(c.writeValueWithResponse)await c.writeValueWithResponse(b);else await c.writeValue(b)}
 function ergBike(v){// FTMS Indoor Bike Data
-  const E=ERG;if(!E)return;const f=v.getUint16(0,true);let o=2;
+  const E=ERG;if(!E)return;E.dataAt=Date.now();const f=v.getUint16(0,true);let o=2;
   if(!(f&1)){E.kmh=v.getUint16(o,true)/100;o+=2}
   if(f&2)o+=2;
   if(f&4){E.cad=Math.round(v.getUint16(o,true)/2);o+=2}
@@ -2139,17 +2150,22 @@ function ergBike(v){// FTMS Indoor Bike Data
   if(f&512&&!E.hrDev){E.hr=v.getUint8(o)}
 }
 function ergCps(v){// Cycling Power Measurement
-  const E=ERG;if(!E)return;const f=v.getUint16(0,true);E.pw=v.getInt16(2,true);let o=4;
+  const E=ERG;if(!E)return;E.dataAt=Date.now();const f=v.getUint16(0,true);E.pw=v.getInt16(2,true);let o=4;
   if(f&1)o+=1;if(f&4)o+=2;if(f&16)o+=6;
   if(f&32){const r=v.getUint16(o,true),t=v.getUint16(o+2,true);const c=E.crank;
     if(c&&t!==c.t){const dr=(r-c.r+65536)%65536,dt=((t-c.t+65536)%65536)/1024;if(dt>0&&dr<10)E.cad=Math.round(dr/dt*60)}
     if(!c||t!==c.t)E.crank={r,t,at:Date.now()};else if(Date.now()-c.at>3000)E.cad=0}
 }
-async function ergSend(w){const E=ERG;if(!E||E.sim||!E.mode||E.mode==="power")return;if(E.lastSent===w)return;E.lastSent=w;
-  try{if(E.mode==="ftms")await ergWrite([0x05,w&255,(w>>8)&255]);else await ergWrite([0x42,w&255,(w>>8)&255])}catch(e){E.lastSent=null}}
+async function ergSend(w){const E=ERG;if(!E||E.sim||!E.mode||E.mode==="power")return;if(E.lastSent===w)return;if(E.busy){E.again=1;return}E.lastSent=w;E.busy=1;
+  try{if(E.mode==="ftms")await ergWrite([0x05,w&255,(w>>8)&255]);else await ergWrite([0x42,w&255,(w>>8)&255])}catch(e){E.lastSent=null}
+  E.busy=0;if(E.again&&ERG===E){E.again=0;if(E.run)ergSend(ergTarget())}}
 const ERG_FTP=225;
 const ZONES=[[.56,"Erholung","#8A8F98"],[.76,"Grundlage","#5B8DEF"],[.88,"Tempo","#3FBF66"],[.95,"Sweet Spot","#F4C430"],[1.06,"Schwelle","#F07A1A"],[9,"VO2max","#E2402B"]];
 const zoneOf=w=>ZONES.find(z=>w/ERG_FTP<z[0]);
+let AUTOP=LS.get("kp_autop",true);
+const ergAdjTxt=()=>ERG.free?ERG.manualW+" W":(ERG.off>0?"+":"")+ERG.off+" W";
+const ergAdjPct=()=>ERG.free?(ERG.manualW-50)/4:(ERG.off+100)/2;
+function ergAdjShow(){const o=document.getElementById("ergOff");if(o)o.textContent=ergAdjTxt();const sl=document.getElementById("ergSl");if(sl){sl.value=ERG.free?ERG.manualW:ERG.off;sl.style.setProperty("--p",ergAdjPct()+"%")}}
 function ergBarHtml(){const E=ERG;if(E.free)return"";const mx=Math.max(...E.steps.map(s=>Math.max(s.w,s.w1||0)))*1.05;
   return `<div class="erg-bar" id="ergBar" aria-hidden="true">${E.steps.map((s,i)=>`<span data-i="${i}" style="flex:${s.d} 1 0;height:${Math.max(14,Math.max(s.w,s.w1||0)/mx*100)}%;background:${zoneOf((s.w+(s.w1??s.w))/2)[2]}"></span>`).join("")}<i class="now" id="ergNow" style="left:0"></i></div>`}
 function ergRender(){
@@ -2170,7 +2186,7 @@ function ergRender(){
      ${E.mode&&!E.sim?"":`<button class="btn dark" data-erg="connect"${bt?"":" disabled"}>Rolle verbinden</button>${bt?`<button class="btn" data-erg="connectall">Alle Geräte zeigen</button>`:""}`}
      <span class="st ${E.hrDev?"on":""}"><i></i>${E.hrDev?"Pulsgurt verbunden":"Pulsgurt nicht verbunden"}</span>${E.hrDev||!bt?"":`<button class="btn" data-erg="hr">Pulsgurt verbinden</button>`}
      ${E.mode?"":`<button class="btn" data-erg="sim">Ohne Rolle testen</button>`}
-     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 35</small>
+     <button class="btn" data-erg="snd" aria-label="Töne an oder aus">${SOUND?"🔊":"🔇"}</button><small style="opacity:.55;font-size:11px">Stand 36</small>
    </div>
    ${E.sim?`<p class="erg-msg sim">Testmodus: Watt und Trittfrequenz sind nur simuliert, die Rolle ist nicht verbunden. Mit „Rolle verbinden“ wechselst du zur echten Rolle.</p>`:""}
    ${bt?"":`<p class="erg-msg">Dieser Browser kann kein Bluetooth. Auf dem iPad öffne die App in „Bluefy“ (kostenlos im App Store), am Laptop in Chrome. Mit „Ohne Rolle testen“ kannst du dir den Ablauf trotzdem ansehen.</p>`}
@@ -2189,11 +2205,14 @@ function ergRender(){
     </div>
    </div>
    ${E.free?"":`<div class="erg-panel">${ergBarHtml()}<svg class="erg-trace" id="ergTrace" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true"><polyline class="tl" id="ergTl" fill="none" stroke-width="2" points=""/><polyline class="pl" id="ergPl" fill="none" stroke-width="2.5" stroke-linejoin="round" points=""/></svg><div class="erg-meta"><span>letzte 3 min: Watt und Ziel</span><span id="ergEl">${mmss(E.t)} / ${mmss(E.total)}</span></div></div>`}
-   <div class="erg-adj"><span>${E.free?"Watt":"Intensität"}</span><button class="btn" data-erg="minus">−5</button><span class="off" id="ergOff">${E.free?E.manualW+" W":(E.off>0?"+":"")+E.off+" W"}</span><button class="btn" data-erg="plus">+5</button>${E.free?"":`<button class="btn" data-erg="skip">Abschnitt überspringen</button>`}</div>
+   <div class="erg-panel erg-adj"><div class="lb"><span>${E.free?"Watt":"Intensität"}</span><b class="off" id="ergOff">${ergAdjTxt()}</b></div>
+    <div class="sl"><button class="btn" data-erg="minus" aria-label="5 Watt weniger">−5</button><input type="range" class="erg-sl" id="ergSl" step="5" ${E.free?`min="50" max="450" value="${E.manualW}"`:`min="-100" max="100" value="${E.off}"`} aria-label="${E.free?"Watt":"Intensität"}" style="--p:${ergAdjPct()}%"><button class="btn" data-erg="plus" aria-label="5 Watt mehr">+5</button></div>
+    ${E.free?"":`<div><button class="btn" data-erg="skip">Abschnitt überspringen</button></div>`}</div>
+   ${E.sim?"":`<div class="erg-auto"><button class="btn${AUTOP?" on":""}" data-erg="auto" aria-pressed="${AUTOP}">Auto-Start/Stopp ${AUTOP?"an":"aus"}</button><span>${AUTOP?(E.autoP?"Pausiert, weiter sobald du trittst.":E.manualP&&E.t>0?"Von Hand pausiert, weiter mit „Weiter“.":E.t>0?"Pausiert nach 4 s ohne Treten.":"Startet, sobald du trittst."):"Start und Pause nur per Knopf."}</span></div>`}
    <div class="erg-acts"><button class="btn dark big" data-erg="go"${E.mode?"":" disabled"}>${E.run?"Pause":E.t>0?"Weiter":"Start"}</button>${E.t>0?`<button class="btn" data-erg="finish">Fahrt beenden &amp; speichern</button>`:""}</div>
    <p class="muted" style="font-size:13px">Die Rolle hält die Zielwattzahl im ERG-Modus, egal welcher Gang. Am besten mittleres Kettenblatt und mittleres Ritzel, Trittfrequenz 85–95. Der Bildschirm bleibt an, solange die Fahrt läuft.</p>
   <div class="erg-banner" id="ergBanner"><b></b><span></span></div></div>`;
-  E.lastStep=null;E.lastZone=null;ergTick(true);
+  E.lastStep=null;E.lastZone=null;if(E.mode&&!E.iv)E.iv=setInterval(()=>ergTick(false),1000);ergTick(true);
 }
 const RING={r:112,len:527.8,max:340};
 const ringAng=w=>135+Math.min(1,Math.max(0,w/RING.max))*270;
@@ -2218,6 +2237,7 @@ function ergConfetti(){if(matchMedia("(prefers-reduced-motion: reduce)").matches
   document.body.appendChild(c);setTimeout(()=>c.remove(),4500)}
 function ergTick(paintOnly){
   const E=ERG;if(!E||E.phase==="done")return;
+  if(!paintOnly&&ergAuto())return;
   if(!paintOnly&&E.run){const now=Date.now(),dt=Math.min(3,(now-E.last)/1000);E.last=now;E.t+=dt;
     if(E.sim){const tg=ergTarget();E.pw=Math.round(E.pw+(tg-E.pw)*.35+(Math.random()-.5)*12);E.cad=86+Math.round(Math.random()*8);if(!E.hrDev||!E.hrDev.gatt)E.hr=Math.round(105+tg*.14+(Math.random()-.5)*3);E.kmh=24+tg/25+Math.random()}
     E.dist+=E.kmh/3.6*dt;
@@ -2268,7 +2288,15 @@ function ergTick(paintOnly){
     pl.setAttribute("points",S.map(s=>X(s.s)+","+Y(s.p)).join(" "));
     const tp=[];for(let s=Math.ceil(t0);s<=E.t;s+=5){const st=ergStepAt(s);if(st){const w=st.s.w1!=null?st.s.w+(st.s.w1-st.s.w)*(st.into/st.s.d):st.s.w;tp.push(X(s)+","+Y(w+E.off))}}tl.setAttribute("points",tp.join(" "))}
 }
-function ergGo(){const E=ERG;if(!E.mode)return;E.run=!E.run;if(E.run){E.last=Date.now();E.lastSent=null;wake(true);if(!E.iv)E.iv=setInterval(()=>ergTick(false),1000)}else{wake(false)}ergRender()}
+// Auto-Start/Stopp: startet beim ersten Treten, pausiert nach 4 s ohne Kurbel/Watt, läuft beim Weitertreten weiter. Nach manueller Pause nur per Knopf.
+function ergAuto(){const E=ERG;if(!AUTOP||E.sim||!E.mode||E.mode==="sim")return false;
+  const moving=Date.now()-(E.dataAt||0)<3000&&(E.cad>0||E.pw>=30);
+  if(E.run){if(moving){E.still=0;return false}E.still=(E.still||0)+1;if(E.still<4)return false;
+    E.t=Math.max(0,E.t-(E.still-1));while(E.samples.length&&E.samples.at(-1).s>E.t)E.samples.pop();
+    E.run=false;E.autoP=true;E.still=0;ergRender();ergBanner("Auto-Pause","Weiter, sobald du trittst");return true}
+  if(moving&&!E.manualP&&(E.autoP||E.t===0)){E.run=true;E.autoP=false;E.still=0;E.last=Date.now();E.lastSent=null;wake(true);ergRender();ergBanner(E.t>0?"Weiter geht's":"Los geht's",E.free?"":"Training läuft");beep(880,.1,.3);return true}
+  return false}
+function ergGo(){const E=ERG;if(!E.mode)return;E.run=!E.run;E.manualP=!E.run;E.autoP=false;E.still=0;if(E.run){E.last=Date.now();E.lastSent=null;wake(true);if(!E.iv)E.iv=setInterval(()=>ergTick(false),1000)}else{wake(false)}ergRender()}
 function ergSummary(){const S=ERG.samples,n=S.length||1,sum=k=>S.reduce((a,x)=>a+x[k],0);
   const p=S.map(x=>x.p),r=[];for(let i=29;i<p.length;i++){let a=0;for(let j=i-29;j<=i;j++)a+=p[j];r.push(Math.pow(a/30,4))}
   const np=r.length?Math.round(Math.pow(r.reduce((a,x)=>a+x,0)/r.length,.25)):Math.round(sum("p")/n);
@@ -2307,7 +2335,8 @@ document.getElementById("ergRoot").addEventListener("click",ev=>{const b=ev.targ
   else if(a==="sim"){E.sim=true;E.mode="sim";ergRender()}
   else if(a==="snd"){SOUND=!SOUND;LS.set("kp_sound",SOUND);b.textContent=SOUND?"🔊":"🔇";if(SOUND)beep(880,.08)}
   else if(a==="go")ergGo();
-  else if(a==="plus"||a==="minus"){const d=a==="plus"?5:-5;if(E.free)E.manualW=Math.max(50,E.manualW+d);else E.off=Math.max(-100,Math.min(100,E.off+d));const o=document.getElementById("ergOff");if(o)o.textContent=E.free?E.manualW+" W":(E.off>0?"+":"")+E.off+" W";ergTick(true)}
+  else if(a==="plus"||a==="minus"){const d=a==="plus"?5:-5;if(E.free)E.manualW=Math.max(50,E.manualW+d);else E.off=Math.max(-100,Math.min(100,E.off+d));if(E.free)E.manualW=Math.min(450,E.manualW);ergAdjShow();ergTick(true)}
+  else if(a==="auto"){AUTOP=!AUTOP;LS.set("kp_autop",AUTOP);E.still=0;ergRender()}
   else if(a==="skip"){const x=ergStepAt(E.t);if(x)E.t+=x.left+.01;ergTick(true)}
   else if(a==="finish")ergFinish();
   else if(a==="tcx")ergSaveTcx();
@@ -2316,6 +2345,11 @@ document.getElementById("ergRoot").addEventListener("click",ev=>{const b=ev.targ
   else if(a==="close"){if((E.run||E.t>0)&&E.phase!=="done"){if(!confirm("Fahrt beenden? Sie wird gespeichert."))return;ergFinish();return}
     try{E.dev&&E.dev.gatt&&E.dev.gatt.connected&&E.dev.gatt.disconnect()}catch(e){}clearInterval(E.iv);ERG=null;ergRender()}
 });
+
+document.getElementById("ergRoot").addEventListener("input",ev=>{if(ev.target.id!=="ergSl"||!ERG)return;const v=+ev.target.value;if(ERG.free)ERG.manualW=v;else ERG.off=v;ergAdjShow();ergTick(true)});
+{let lastTap=0;document.getElementById("ergRoot").addEventListener("touchend",ev=>{const b=ev.target.closest("button");const n=Date.now();
+  if(b&&n-lastTap<400){ev.preventDefault();b.click()}lastTap=b?n:0},{passive:false})}
+document.addEventListener("dblclick",ev=>{if(ev.target.closest(".erg"))ev.preventDefault()});
 
 /* ---------- Raketen (ab und zu über den Plan, beim Intervall-Feuer im Radraum) ---------- */
 function rocketSvg(){return `<svg class="rocket" viewBox="0 0 120 50" aria-hidden="true"><g class="rf"><path d="M30 25L4 14Q12 25 4 36Z" fill="#F07A1A" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/><path d="M30 25L14 19Q18 25 14 31Z" fill="#F4C430"/></g>
